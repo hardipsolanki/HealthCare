@@ -1,16 +1,27 @@
-import { Link } from "expo-router";
-import React from "react";
-import { StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { ROUTES_PATH } from "@/constant";
+import { loadAuthFromStorage } from "@/features/auth/authSlice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { Redirect } from "expo-router";
+import { useEffect } from "react";
+const Index = () => {
+  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
 
-const index = () => {
-  return (
-    <SafeAreaView>
-      <Link href="/login">Login</Link>
-    </SafeAreaView>
-  );
+  useEffect(() => {
+    dispatch(loadAuthFromStorage())
+      .unwrap()
+      .then(() => {
+        console.log("done: ");
+      });
+  }, []);
+
+  console.log({ user }, isAuthenticated);
+
+  if (!isAuthenticated || !user) {
+    return <Redirect href={ROUTES_PATH.Login} />;
+  }
+
+  return <Redirect href={ROUTES_PATH.Index} />;
 };
 
-export default index;
-
-const styles = StyleSheet.create({});
+export default Index;

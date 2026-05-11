@@ -1,4 +1,4 @@
-import { AuthState, User } from "@/types";
+import { AuthState, Patient } from "@/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
     createAsyncThunk,
@@ -29,7 +29,8 @@ export const loadAuthFromStorage = createAsyncThunk("auth/loadAuthFromStorage",
 
 export const saveAuthToStorage = createAsyncThunk(
     "auth/saveAuthToStorage",
-    async ({ token, user, }: { token: string; user: User; }) => {
+    async ({ token, user, }: { token: string; user: Patient; }) => {
+        console.log({token}, {user})
         await AsyncStorage.setItem("accessToken", token);
 
         await AsyncStorage.setItem(
@@ -57,7 +58,7 @@ const authSlice = createSlice({
     initialState,
 
     reducers: {
-        setUser: (state, action: PayloadAction<User>) => {
+        setUser: (state, action: PayloadAction<Patient>) => {
             state.user = action.payload;
         },
 

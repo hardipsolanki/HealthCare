@@ -4,7 +4,7 @@ import { ROUTES_PATH } from "@/constant";
 import { TEXTS } from "@/constant/texts";
 import { useCreateUser } from "@/hooks/mutations/useCreateAccount";
 import { COLORS } from "@/theme/colors";
-import { ApiError, SignupInput } from "@/types";
+import { ApiError, CreatePatientResponse, SignupInput } from "@/types";
 import { Link, useRouter } from "expo-router";
 import React from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
@@ -25,7 +25,6 @@ const Signup = () => {
   const {
     handleSubmit,
     control,
-    watch,
     formState: { errors },
   } = useForm<SignupInput>({
     defaultValues: {
@@ -48,7 +47,17 @@ const Signup = () => {
   const onSubmit: SubmitHandler<SignupInput> = (data) => {
     const { terms, ...rest } = data;
     createUser(rest, {
-      onSuccess: () => router.push(ROUTES_PATH.Login),
+      onSuccess: (response) => {
+        const createPatientResponse =
+          response as unknown as CreatePatientResponse;
+        Toast.show({
+          type: "success",
+          text1: "Signup successful",
+          text2: createPatientResponse.status.description,
+        });
+        router.push(ROUTES_PATH.Login);
+      },
+
       onError: (error: ApiError) => {
         Toast.show({ type: "error", text1: error.data?.message });
       },

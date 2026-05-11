@@ -2,11 +2,11 @@ import { COLORS } from "@/theme/colors";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import {
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 type Props = {
@@ -16,6 +16,7 @@ type Props = {
   isPassword?: boolean;
   keyboardType?: "numeric" | "default" | "email-address" | "phone-pad";
   err?: string;
+  icon?: any;
 };
 
 const CustomInput = ({
@@ -24,6 +25,7 @@ const CustomInput = ({
   onChangeText,
   isPassword = false,
   keyboardType = "default",
+  icon = "person",
   err,
 }: Props) => {
   const [secureText, setSecureText] = useState(isPassword);
@@ -33,7 +35,7 @@ const CustomInput = ({
     <View style={styles.container}>
       <View style={[styles.inputContainer, hasError && styles.errorBorder]}>
         <Ionicons
-          name={isPassword ? "lock-closed-outline" : "person-outline"}
+          name={isPassword ? "lock-closed-outline" : icon}
           size={20}
           color={COLORS.textMuted}
           style={styles.inputIcon}

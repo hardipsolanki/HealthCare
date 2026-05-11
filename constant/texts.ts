@@ -32,6 +32,56 @@ export const TEXTS = {
         termsAndConditions: "Terms & Conditions",
         haveAccount: "Already have an account?",
         Login: "Login"
-    }
+    },
+    uploadDocument: {
+        title: "Upload Document",
+        subTitle: "Choose an option to upload",
+
+        camera: "Camera",
+        cameraDesc: "Take a photo",
+
+        gallery: "Gallery",
+        galleryDesc: "Choose from gallery",
+
+        pdf: "PDF Document",
+        pdfDesc: "Upload PDF file",
+
+        files: "Other Files",
+        filesDesc: "Browse files",
+    },
+    addDocument: {
+        title: "Upload Document",
+
+        subTitle:
+            "Add your medical records securely",
+
+        documentName: "Document Name",
+
+        documentType: "Document Type",
+
+        uploadImage: "Upload Image",
+
+        uploadPdf: "Upload PDF",
+
+        uploadButton: "Upload Document",
+
+        chooseImage: "Choose Image",
+
+        choosePdf: "Choose PDF Document",
+
+        selectDocumentType: "Select document type",
+
+        uploadFile: "Upload File",
+
+        chooseFile: "Choose File",
+
+        fileSupportText: "PDF or Image",
+
+        uploadSuccess: "Document uploaded",
+
+        fileRequired: "Please select file",
+
+        typeRequired: "Document type is required",
+    },
 
 };
