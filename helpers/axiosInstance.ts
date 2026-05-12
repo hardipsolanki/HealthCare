@@ -53,15 +53,49 @@ axiosInstance.interceptors.response.use(
         return response
     },
 
-    (error: AxiosError) => {
+    async (error: AxiosError) => {
+        console.log("errpr res: ", error.response?.status)
         // handle some error if user is not logged in then redirect to login page
-        if (error.status === 401) {
-            // window.location.href = '/';
+        if (error.response?.status !== 401) {
+            return Promise.reject(error);
         }
-        return Promise.reject(error);
+        // }
+        if (error.response.status === 401) {
+            try {
+                const refreshToken = await AsyncStorage.getItem("refreshToken");
 
-    }
-)
+                if (!refreshToken) {
+                    console.error("Refresh token not found");
+                    return Promise.reject(error);
+                }
+                const url = "https://deductive-stephane-collusive.ngrok-free.dev/auth/refresh-token";
+
+                const response: AxiosResponse<{ data : {accessToken: string, refreshToken: string} }> = await axios.post(url, { refreshToken: refreshToken }, {
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+
+                await AsyncStorage.setItem("accessToken" , response.data.data.accessToken);
+                await AsyncStorage.setItem("refreshToken", response.data.data.refreshToken);
+                console.log("Successfully refresh token")
+
+                error.response.config.headers["Authorization"] = "Bearer " + response.data.data.accessToken;
+                return axiosInstance(error.response.config)
+            }
+            catch (err: any) {
+                console.error("Error at refresh token", err.response.status)
+
+                //If refresh token is invalid, you will receive this error status and log user out
+                if (err.response.status === 400) {
+                    throw { response: { status: 401 } };
+                }
+                return Promise.reject(err);
+            }
+
+        }
+    })
+
 
 // Handle error for batter error response
 const errorHandlerRes = (error: unknown): ApiError => {
@@ -73,7 +107,7 @@ const errorHandlerRes = (error: unknown): ApiError => {
         }
     } else {
         return {
-            message: "An unexpected error occurred"
+            message: error instanceof Error ? error.message : "An unexpected error occurred"
         }
     }
 }

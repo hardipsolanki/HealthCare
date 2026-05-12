@@ -1,10 +1,9 @@
 import { createAccount } from '@/api/auth/auth.endpoints'
+import { queryClient } from '@/lib/queryClient'
 import { queryKeys } from '@/lib/queryKeys'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 
 export const useCreateUser = () => {
-  const queryClient = useQueryClient()
-
   return useMutation({
     mutationFn: createAccount,
     onSuccess: () => {

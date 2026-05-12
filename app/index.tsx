@@ -10,16 +10,12 @@ const Index = () => {
   useEffect(() => {
     dispatch(loadAuthFromStorage())
       .unwrap()
-      .then(() => {
-        console.log("done: ");
-      });
+      .then(() => {});
   }, []);
 
-  console.log({ user }, isAuthenticated);
-
-  if (!isAuthenticated || !user) {
-    return <Redirect href={ROUTES_PATH.Login} />;
-  }
+  // if (!isAuthenticated || !user) {
+  //   return <Redirect href={ROUTES_PATH.Login} />;
+  // }
 
   return <Redirect href={ROUTES_PATH.Index} />;
 };

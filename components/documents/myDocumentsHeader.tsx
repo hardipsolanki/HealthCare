@@ -1,38 +1,48 @@
 import { COLORS } from "@/theme/colors";
 import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-const Header = () => {
+const Header = ({ onOpenFilter }: any) => {
   return (
-    <View style={styles.headerContainer}>
-      <Text style={styles.headerTitle}>My Documents</Text>
+    <LinearGradient
+      colors={[COLORS.primary, COLORS.secondary]}
+      start={{ x: 0, y: 1 }}
+      end={{ x: 1, y: 0 }}
+      style={styles.gradientContainer}
+    >
+      <View style={styles.headerContainer}>
+        <Text style={styles.headerTitle}>My Documents</Text>
 
-      <View style={styles.headerRight}>
-        <TouchableOpacity style={styles.iconButton}>
-          <Ionicons name="search" size={22} color={COLORS.white} />
-        </TouchableOpacity>
+        <View style={styles.headerRight}>
+          <TouchableOpacity style={styles.iconButton}>
+            <Ionicons name="search" size={22} color={COLORS.white} />
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.iconButton}>
-          <Ionicons name="funnel-outline" size={20} color={COLORS.white} />
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.iconButton} onPress={onOpenFilter}>
+            <Ionicons name="funnel-outline" size={22} color={COLORS.white} />
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </LinearGradient>
   );
 };
 
 export default Header;
 
 const styles = StyleSheet.create({
+  gradientContainer: {
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+  },
+
   headerContainer: {
-    backgroundColor: COLORS.primary,
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 24,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
   },
 
   headerTitle: {
@@ -48,5 +58,22 @@ const styles = StyleSheet.create({
 
   iconButton: {
     marginLeft: 14,
+  },
+
+  indicator: {
+    backgroundColor: COLORS.textMuted,
+    width: 50,
+    height: 5,
+  },
+
+  bottomSheetBackground: {
+    backgroundColor: COLORS.white,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+  },
+
+  sheetContent: {
+    flex: 1,
+    paddingBottom: 20,
   },
 });

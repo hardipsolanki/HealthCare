@@ -17,11 +17,13 @@ const initialState: AuthState = {
 
 export const loadAuthFromStorage = createAsyncThunk("auth/loadAuthFromStorage",
     async () => {
-        const token = await AsyncStorage.getItem("accessToken");
+        const accessToken = await AsyncStorage.getItem("accessToken");
+        const refreshToken = await AsyncStorage.getItem("refreshToken");
         const user = await AsyncStorage.getItem("user");
 
         return {
-            accessToken: token,
+            accessToken: accessToken ,
+            refreshToken: refreshToken,
             user: user ? JSON.parse(user) : null,
         };
     }
@@ -29,9 +31,9 @@ export const loadAuthFromStorage = createAsyncThunk("auth/loadAuthFromStorage",
 
 export const saveAuthToStorage = createAsyncThunk(
     "auth/saveAuthToStorage",
-    async ({ token, user, }: { token: string; user: Patient; }) => {
-        console.log({token}, {user})
-        await AsyncStorage.setItem("accessToken", token);
+    async ({ token, user, }: { token: {accessToken: string, refreshToken: string}; user: Patient; }) => {
+        await AsyncStorage.setItem("accessToken", token.accessToken);
+        await AsyncStorage.setItem("refreshToken", token.refreshToken);
 
         await AsyncStorage.setItem(
             "user",
@@ -49,6 +51,7 @@ export const logoutUser = createAsyncThunk(
     "auth/logoutUser",
     async () => {
         await AsyncStorage.removeItem("accessToken");
+        await AsyncStorage.removeItem("refreshToken");
         await AsyncStorage.removeItem("user");
     }
 );
@@ -103,7 +106,7 @@ const authSlice = createSlice({
         builder.addCase(saveAuthToStorage.fulfilled, (state, action) => {
             state.isLoading = false;
 
-            state.accessToken = action.payload.token;
+            state.accessToken = action.payload.token.accessToken;
 
             state.user = action.payload.user;
 

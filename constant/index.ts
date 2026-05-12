@@ -5,6 +5,7 @@ export const ROUTES = {
     SIGNUP: "signup",
     TABS: "(tabs)",
     ADD_DOCUMENT: "add-document",
+    DOCUMENT_DETAILS: "document-details/[documentId]",
 }
 
 export const ROUTES_PATH = {
@@ -12,4 +13,5 @@ export const ROUTES_PATH = {
     Login: "/login",
     Signup: "/signup",
     AddDocument: "/add-document",
+    DocumentDetails: `/document-details/[documentId]`,
 } as const

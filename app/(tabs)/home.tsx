@@ -17,7 +17,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import QuickActionCard from "@/components/QuickActionCard";
 import SectionHeader from "@/components/SectionHeader";
 import SummaryCard from "@/components/SummaryCard";
-import { useAppSelector } from "@/store/hooks";
 import { COLORS } from "@/theme/colors";
 
 const summaryData = [
@@ -78,8 +77,6 @@ const quickActions = [
 ];
 
 export default function HomeScreen() {
-  const { accessToken } = useAppSelector((state) => state.auth);
-  console.log({ accessToken });
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <ScrollView

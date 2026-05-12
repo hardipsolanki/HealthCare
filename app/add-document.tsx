@@ -3,7 +3,7 @@
 import CustomButton from "@/components/Button";
 import { ROUTES_PATH } from "@/constant";
 import { TEXTS } from "@/constant/texts";
-import { useAddDocument } from "@/hooks/mutations/addDocument";
+import { useAddDocument } from "@/hooks/mutations/useAddDocument";
 import { COLORS } from "@/theme/colors";
 import { AddDocumentInput, ApiError, ImageFile } from "@/types";
 
@@ -33,13 +33,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
 const documentTypeItems = [
+  { label: "Family", value: "family" },
+
   { label: "Medical Document", value: "medical_document" },
 
-  { label: "Prescription", value: "prescription" },
-
-  { label: "Lab Report", value: "lab_report" },
+  { label: "Prescription", value: "medication" },
 
   { label: "Insurance", value: "insurance" },
+
+  { label: "Lab Report", value: "other" },
 ];
 
 const AddDocument = () => {

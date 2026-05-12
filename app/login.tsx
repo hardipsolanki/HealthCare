@@ -44,7 +44,10 @@ const Login = () => {
         const loginResponse = response as LoginResponse;
         dispatch(
           saveAuthToStorage({
-            token: loginResponse.data.data.accessToken,
+            token: {
+              accessToken: loginResponse.data.data.accessToken,
+              refreshToken: loginResponse.data.data.refreshToken,
+            },
             user: loginResponse.data.data.patient,
           }),
         )

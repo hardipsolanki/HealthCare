@@ -7,5 +7,7 @@ export const queryKeys = {
   documents: {
     all: ['documents'] as const,
     byUser: (userId: string) => [...queryKeys.documents.all, 'byUser', userId] as const,
+    detail: (id: string) =>
+      [...queryKeys.documents.all, 'detail', id] as const,
   },
 }

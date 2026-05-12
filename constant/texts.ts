@@ -83,5 +83,40 @@ export const TEXTS = {
 
         typeRequired: "Document type is required",
     },
+    filters: {
+        filter: "Filter",
+        reset: "Reset",
+
+        documentType: "Document Type",
+        category: "Category",
+        date: "Date",
+
+        selectDate: "Select Date",
+
+        sortBy: "Sort By",
+        orderBy: "Order By",
+
+        applyFilters: "Apply Filters",
+    },
+
+    profile: {
+        userName: "Priya Sharma",
+
+        userEmail: "priya.sharma@email.com",
+
+        userPhone: "+91 98765 43210",
+
+        personalInformation: "Personal Information",
+
+        emergencyContacts: "Emergency Contacts",
+
+        medicalInformation: "Medical Information",
+
+        notificationSettings: "Notification Settings",
+
+        privacyPolicy: "Privacy Policy",
+
+        termsConditions: "Terms & Conditions",
+    },
 
 };

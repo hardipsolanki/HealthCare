@@ -1,3 +1,4 @@
+// theme/colors.ts
 
 export const COLORS = {
   primary: "#7F5AF0",
@@ -24,9 +25,9 @@ export const COLORS = {
 
   purpleTextLight: "#E9DFFF",
 
-  text: '#1C1C1E',
+  text: "#1C1C1E",
 
-  subText: '#8E8E93',
-  
-  red: '#FF4D4F',
+  subText: "#8E8E93",
+
+  red: "#FF4D4F",
 };

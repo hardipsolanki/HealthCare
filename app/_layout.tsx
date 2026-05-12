@@ -44,6 +44,12 @@ const RootLayout = () => {
                   headerShown: false,
                 }}
               />
+              <Stack.Screen
+                name={ROUTES.DOCUMENT_DETAILS}
+                options={{
+                  headerShown: false,
+                }}
+              />
             </Stack>
             <Toast />
           </BottomSheetModalProvider>

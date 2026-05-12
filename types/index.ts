@@ -125,12 +125,83 @@ export interface CreatePatientResponse {
 }
 
 
-type DocumentType = 'PDF' | 'JPG';
+export interface FetchDocsApiResponse {
+  data: DocumentItem[];
+  status: Status;
+}
 
-export interface DocumentItemType {
+export interface Data {
+  items: DocumentItem[];
+  limit: number;
+  page: number;
+  total: number;
+}
+
+export interface DocumentItem {
   id: string;
-  title: string;
-  date: string;
-  type: DocumentType;
-  size: string;
+  userId: string;
+  documentType: string;
+  fileName: string;
+  fileStoragePath: string;
+  s3Bucket: string;
+  s3Key: string;
+  fileType: string;
+  fileSize: number;
+  ocrStatus: "pending" | "completed" | "failed"; // You can extend as needed
+  ocrExtractedText: string | null;
+  structuredExtractedData: any | null; // or a specific interface if known
+  reportDate: string | null;
+  hospitalName: string | null;
+  doctorName: string | null;
+  remarks: string | null;
+  softDelete: boolean;
+  deletedAt: string | null;
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
+}
+
+interface Status {
+  description: string;
+  status: string;
+  statusCode: number;
+}
+
+
+export interface SingleDocumentResponse {
+  data: DocumentItem;
+  status: Status;
+}
+
+
+
+export type FetchDocumentsPayload = {
+  sort: {
+    sortBy?: string;
+    orderBy?: "asc" | "desc";
+  },
+  filter: {
+    search?: string;
+  },
+  page: {
+    pageNumber?: number;
+    pageLimit?: number;
+  }
+};
+
+
+export interface PaginatedDocumentResponse {
+  data: DocumentItem[];
+  page: PageInfo;
+  status: Status;
+}
+
+export interface DocumentsState {
+  documents: DocumentItem[];
+  pageInfo: PageInfo;
+}
+interface PageInfo {
+  pageLimit: number;
+  pageNumber: number; // Note: This is 0-based (0 = first page)
+  totalPages: number;
+  totalRecords: number;
 }
