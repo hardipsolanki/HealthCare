@@ -118,5 +118,28 @@ export const TEXTS = {
 
         termsConditions: "Terms & Conditions",
     },
+    drawer: {
+    myProfile: "My Profile",
+
+    healthRecords: "Health Records",
+
+    myDocuments: "My Documents",
+
+    appointments: "Appointments",
+
+    reminders: "Reminders",
+
+    settings: "Settings",
+
+    helpSupport: "Help & Support",
+
+    aboutUs: "About Us",
+
+    logout: "Logout",
+
+    userName: "Priya Sharma",
+
+    email: "priya.sharma@email.com",
+  },
 
 };

@@ -16,9 +16,9 @@ const Header = ({ onOpenFilter }: any) => {
         <Text style={styles.headerTitle}>My Documents</Text>
 
         <View style={styles.headerRight}>
-          <TouchableOpacity style={styles.iconButton}>
+          {/* <TouchableOpacity style={styles.iconButton}>
             <Ionicons name="search" size={22} color={COLORS.white} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <TouchableOpacity style={styles.iconButton} onPress={onOpenFilter}>
             <Ionicons name="funnel-outline" size={22} color={COLORS.white} />

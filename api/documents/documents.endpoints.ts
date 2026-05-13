@@ -1,5 +1,5 @@
 import { getReq, postReq } from "@/helpers/axiosInstance";
-import { AddDocumentInput, FetchDocsApiResponse, FetchDocumentsPayload, PaginatedDocumentResponse, SingleDocumentResponse } from "@/types";
+import { AddDocumentInput, FetchDocumentsPayload, PaginatedDocumentResponse, SingleDocumentResponse } from "@/types";
 
 
 
@@ -11,19 +11,12 @@ export const addDocument = async (data: AddDocumentInput) => {
     });
     return res
 }
-export const fetchDocuments = async () => {
-    try {
-        const res = await getReq<FetchDocsApiResponse>("/documents/list");
-        return res
-    } catch (error) {
-        console.log("Error while fetch docuemnts: ", error)
-        throw error
-    }
-}
 
 export const fetchDocumentsWithFilter = async (payload: FetchDocumentsPayload) => {
+    console.log({payload})
     try {
         const res = await postReq<{}, PaginatedDocumentResponse>("/documents/list-paginated", payload);
+        console.log({res})
        return res
     } catch (error) {
         console.log("Error while fetch docuemnts: ", error)

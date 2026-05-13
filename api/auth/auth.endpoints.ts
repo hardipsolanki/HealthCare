@@ -10,3 +10,8 @@ export const login = async (data: LoginInput) => {
     const res = await postReq("/auth/login", data);
     return res
 }
+
+export const logout = async () => {
+    const res = await postReq("/auth/logout");
+    return res
+}

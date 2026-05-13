@@ -18,6 +18,7 @@ import {
 } from "react-native";
 
 import { TEXTS } from "@/constant/texts";
+import { useAppSelector } from "@/store/hooks";
 import { COLORS } from "@/theme/colors";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -55,9 +56,10 @@ const menuItems = [
 ];
 
 export default function ProfileScreen() {
+  const user = useAppSelector((state) => state.auth.user);
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
-      <StatusBar barStyle="light-content" backgroundColor={COLORS.secondary} />
+      <StatusBar barStyle="dark-content" />
 
       <LinearGradient
         colors={[COLORS.primary, COLORS.secondary]}
@@ -69,17 +71,17 @@ export default function ProfileScreen() {
         <View style={styles.profileCard}>
           <Image
             source={{
-              uri: "https://i.pravatar.cc/150?img=47",
+              uri: "https://i.pravatar.cc/150?img=22",
             }}
             style={styles.profileImage}
           />
 
           <View style={styles.userInfo}>
-            <Text style={styles.userName}>{TEXTS.profile.userName}</Text>
+            <Text style={styles.userName}>{user?.userName}</Text>
 
-            <Text style={styles.userEmail}>{TEXTS.profile.userEmail}</Text>
+            <Text style={styles.userEmail}>{user?.email}</Text>
 
-            <Text style={styles.userPhone}>{TEXTS.profile.userPhone}</Text>
+            <Text style={styles.userPhone}>{user?.phone}</Text>
           </View>
 
           <TouchableOpacity activeOpacity={0.8} style={styles.editButton}>

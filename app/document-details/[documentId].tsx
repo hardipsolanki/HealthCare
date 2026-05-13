@@ -9,13 +9,13 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import {
-    ActivityIndicator,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -62,6 +62,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const DocumentDetails = () => {
   const { documentId } = useLocalSearchParams<{ documentId: string }>();
+  console.log({ documentId });
   const router = useRouter();
   if (!documentId) {
     return null;

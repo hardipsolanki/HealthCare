@@ -17,7 +17,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import QuickActionCard from "@/components/QuickActionCard";
 import SectionHeader from "@/components/SectionHeader";
 import SummaryCard from "@/components/SummaryCard";
+import { useAppSelector } from "@/store/hooks";
 import { COLORS } from "@/theme/colors";
+import { useNavigation } from "@react-navigation/native";
 
 const summaryData = [
   {
@@ -77,13 +79,15 @@ const quickActions = [
 ];
 
 export default function HomeScreen() {
+  const navigation = useNavigation<any>();
+  const user = useAppSelector((state) => state.auth.user);
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <StatusBar barStyle="light-content" backgroundColor={COLORS.primary} />
+        <StatusBar barStyle="dark-content" />
 
         {/* ================= TOP PURPLE AREA ================= */}
 
@@ -96,7 +100,7 @@ export default function HomeScreen() {
           {/* HEADER */}
 
           <View style={styles.header}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.openDrawer()}>
               <Ionicons name="menu-outline" size={28} color={COLORS.white} />
             </TouchableOpacity>
 
@@ -116,13 +120,13 @@ export default function HomeScreen() {
           <View style={styles.userRow}>
             <Image
               source={{
-                uri: "https://randomuser.me/api/portraits/women/44.jpg",
+                uri: "https://i.pravatar.cc/150?img=22",
               }}
               style={styles.avatar}
             />
 
             <View style={styles.userContent}>
-              <Text style={styles.greeting}>Hi, Priya! 👋</Text>
+              <Text style={styles.greeting}>Hello, {user?.userName}</Text>
 
               <Text style={styles.subGreeting}>Good morning</Text>
             </View>

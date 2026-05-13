@@ -174,21 +174,54 @@ export interface SingleDocumentResponse {
 
 
 
+export type SortByType =
+  | "createdAt"
+  | "updatedAt"
+  | "title";
+
+export type DocumentType =
+  | "prescription"
+  | "report"
+  | "invoice"
+  | "other";
+
+export type FileType =
+  | "pdf"
+  | "jpg"
+  | "jpeg"
+  | "png";
+
 export type FetchDocumentsPayload = {
-  sort: {
-    sortBy?: string;
+  sort?: {
+    sortBy?: SortByType;
     orderBy?: "asc" | "desc";
-  },
-  filter: {
+  };
+
+  filter?: {
     search?: string;
-  },
-  page: {
+
+    createdBy?: string;
+
+    doctorName?: string;
+
+    documentType?: DocumentType;
+
+    fileName?: string;
+
+    fileType?: FileType;
+
+    hospitalName?: string;
+
+    title?: string;
+
+    type?: DocumentType;
+  };
+
+  page?: {
     pageNumber?: number;
     pageLimit?: number;
-  }
+  };
 };
-
-
 export interface PaginatedDocumentResponse {
   data: DocumentItem[];
   page: PageInfo;

@@ -15,6 +15,12 @@ const RootLayout = () => {
           <BottomSheetModalProvider>
             <Stack>
               <Stack.Screen
+                name={ROUTES.DRAWER}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
                 name={ROUTES.INDEX}
                 options={{
                   headerShown: false,
