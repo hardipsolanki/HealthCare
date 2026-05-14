@@ -53,14 +53,14 @@ const styles = StyleSheet.create({
   },
 
   summaryTitle: {
-    marginTop: 12,
+    marginTop: 9,
     fontSize: 13,
     color: COLORS.textSecondary,
   },
 
   summaryValue: {
-    marginTop: 10,
-    fontSize: 24,
+    marginTop: 5,
+    // fontSize: 24,
     fontWeight: "700",
     color: COLORS.textPrimary,
   },

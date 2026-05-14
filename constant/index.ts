@@ -6,7 +6,11 @@ export const ROUTES = {
     TABS: "(tabs)",
     ADD_DOCUMENT: "add-document",
     DOCUMENT_DETAILS: "document-details/[documentId]",
-    DRAWER: "(drawer)"
+    DRAWER: "(drawer)",
+    TermsOfConditions: "terms-and-conditions",
+    PrivacyPolicy: "privacy-policy",
+    UploadDocSuccess: "upload-success",
+    UploadingDocument: "uploading-document"
 }
 
 export const ROUTES_PATH = {
@@ -15,5 +19,11 @@ export const ROUTES_PATH = {
     Signup: "/signup",
     AddDocument: "/add-document",
     DocumentDetails: `/document-details/[documentId]`,
-    Profile: "/profile",
+    // Profile: "/profile",
+    Profile: "/uploading-document",
+    Documents: "/documents",
+    TermsOfConditions: "/terms-and-conditions",
+    PrivacyPolicy: "/privacy-policy",
+    UploadDocSuccess: "/upload-success",
+    UploadingDocument: "/uploading-document"
 } as const

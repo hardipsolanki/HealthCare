@@ -88,7 +88,7 @@ const CustomDrawer = (props: DrawerContentComponentProps) => {
       <StatusBar
         translucent={false}
         barStyle="light-content"
-        backgroundColor={COLORS.primary}
+        backgroundColor={COLORS.white}
       />
 
       <View style={styles.topSection}>
@@ -163,12 +163,12 @@ const styles = StyleSheet.create({
   },
 
   topSection: {
-    paddingTop: 30,
+    paddingTop: 38,
     paddingBottom: 10,
-    // paddingHorizontal: 20,
+    paddingLeft: 20,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    // justifyContent: "center",
     backgroundColor: COLORS.primary,
     width: "100%",
   },

@@ -2,13 +2,13 @@
 
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
-import React, { useRef } from "react";
+import React, { useMemo, useRef } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
-  BottomSheetView
+  BottomSheetView,
 } from "@gorhom/bottom-sheet";
 
 import UploadBottomSheet from "@/components/UploadBottomSheet";
@@ -16,15 +16,7 @@ import { COLORS } from "@/theme/colors";
 
 const TabsLayout = () => {
   const bottomSheetRef = useRef<BottomSheetModal>(null);
-
-  // const openBottomSheet = () => {
-  //   bottomSheetRef.current?.expand();
-  // };
-
-  // const closeBottomSheet = () => {
-  //   bottomSheetRef.current?.close();
-  // };
-
+  const snapPoints = useMemo(() => ["50%"], []);
   const openBottomSheet = () => {
     bottomSheetRef.current?.present();
   };
@@ -43,9 +35,9 @@ const TabsLayout = () => {
 
             tabBarActiveTintColor: COLORS.primary,
             tabBarInactiveTintColor: "#98A2B3",
-            tabBarStyle: {
-              height: 70,
-            },
+            // tabBarStyle: {
+            //   height: 70,
+            // },
           }}
         >
           {/* HOME */}
@@ -138,8 +130,8 @@ const TabsLayout = () => {
         <BottomSheetModal
           ref={bottomSheetRef}
           // index={-1}
-          snapPoints={["52%"]}
           enablePanDownToClose
+          snapPoints={snapPoints}
           backdropComponent={(props) => (
             <BottomSheetBackdrop
               {...props}

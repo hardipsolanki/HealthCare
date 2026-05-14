@@ -43,7 +43,7 @@ const uploadOptions = [
 const UploadBottomSheet = ({ onClose }: { onClose: () => void }) => {
   const router = useRouter();
   return (
-    <View>
+    <View style={styles.container}>
       {/* TITLE */}
 
       <Text style={styles.title}>{TEXTS.uploadDocument.title}</Text>
@@ -58,7 +58,10 @@ const UploadBottomSheet = ({ onClose }: { onClose: () => void }) => {
             key={item.id}
             activeOpacity={0.8}
             style={styles.optionCard}
-            onPress={() => router.push(item.link || ROUTES_PATH.AddDocument)}
+            onPress={() => {
+              router.push(item.link || ROUTES_PATH.AddDocument);
+              onClose();
+            }}
           >
             {/* LEFT */}
 
@@ -98,6 +101,9 @@ const UploadBottomSheet = ({ onClose }: { onClose: () => void }) => {
 export default UploadBottomSheet;
 
 const styles = StyleSheet.create({
+  container: {
+    paddingVertical: 20,
+  },
   title: {
     fontSize: 24,
 
@@ -133,9 +139,9 @@ const styles = StyleSheet.create({
 
     justifyContent: "space-between",
 
-    paddingHorizontal: 16,
+    paddingHorizontal: 10,
 
-    paddingVertical: 18,
+    paddingVertical: 10,
 
     borderBottomWidth: 1,
 

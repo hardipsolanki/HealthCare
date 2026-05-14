@@ -62,7 +62,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const DocumentDetails = () => {
   const { documentId } = useLocalSearchParams<{ documentId: string }>();
-  console.log({ documentId });
   const router = useRouter();
   if (!documentId) {
     return null;
@@ -126,7 +125,13 @@ const DocumentDetails = () => {
         </View>
 
         {/* QUICK ACTIONS */}
-        <DocumentQuickActions />
+        <DocumentQuickActions
+          documentId={documentData.id}
+          documentUrl={documentData.fileStoragePath}
+          s3Key={documentData.s3Key}
+          documentType={documentData.documentType}
+          fileName={documentData.fileName}
+        />
       </ScrollView>
     </SafeAreaView>
   );

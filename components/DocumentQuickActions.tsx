@@ -1,58 +1,247 @@
-// components/DocumentQuickActions.tsx
-
-import { COLORS } from "@/theme/colors";
-import { Ionicons } from "@expo/vector-icons";
-
 import React from "react";
 
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-const actions = [
-  {
-    id: "1",
-    title: "Share",
-    icon: "share-social-outline",
-    color: "#7F5AF0",
-  },
+import { Ionicons } from "@expo/vector-icons";
 
-  {
-    id: "2",
-    title: "Download",
-    icon: "download-outline",
-    color: "#2563EB",
-  },
+import Toast from "react-native-toast-message";
 
-  {
-    id: "3",
-    title: "Favorite",
-    icon: "star-outline",
-    color: "#F59E0B",
-  },
+import { useDeleteDocument } from "@/hooks/mutations/useDeleteDocument";
 
-  {
-    id: "4",
-    title: "Delete",
-    icon: "trash-outline",
-    color: "#EF4444",
-  },
-];
+import { useDownloadDocument } from "@/hooks/mutations/useDownloadDocument";
+import { COLORS } from "@/theme/colors";
+import { Directory, File, Paths } from "expo-file-system";
+import * as Sharing from "expo-sharing";
 
-const DocumentQuickActions = () => {
+type Props = {
+  documentId: string;
+
+  documentUrl: string;
+
+  s3Key: string;
+
+  documentType: string;
+
+  fileName: string;
+};
+
+const DocumentQuickActions = ({
+  documentId,
+  documentUrl,
+  s3Key,
+  documentType,
+  fileName,
+}: Props) => {
+  const { mutate: deleteDocument, isPending } = useDeleteDocument();
+  const { mutateAsync: downloadDocument } = useDownloadDocument();
+
+  /**
+   * Export on Android
+   */
+  const saveOnAndroid = async (fileUri: string, fileName: string) => {
+    try {
+      const permissions =
+        // (await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync()) as any;
+
+        // if (!permissions.granted) {
+        //   Alert.alert("Permission Denied", "Folder access is required.");
+        //   return;
+        // }
+
+        // const destinationUri = await SAF.createFileAsync(
+        //   permissions.directoryUri,
+        //   fileName,
+        //   getMimeType (fileName),
+        // );
+
+        // const fileContent = await FileSystem.readAsStringAsync(fileUri, {
+        //   encoding: FileSystem.EncodingType.Base64,
+        // });
+
+        // await FileSystem.writeAsStringAsync(destinationUri, fileContent, {
+        //   encoding: FileSystem.EncodingType.Base64,
+        // });
+
+        Alert.alert("Success ✓", `Saved as ${fileName}`);
+    } catch (error) {
+      console.error("Android save error:", error);
+    }
+  };
+  /**
+   * Export Document
+   *
+   */
+
+  const exportDocument = async (url: string) => {
+    try {
+      if (Platform.OS === "android") {
+        await saveOnAndroid(url, fileName);
+      }
+    } catch (error) {
+      console.log("Export Error:", error);
+    }
+  };
+
+  /**
+   * Download Document
+   */
+
+  const handleDownload = async () => {
+    try {
+      // Get signed URL from backend
+      const res: any = await downloadDocument(s3Key);
+
+      const url = res.data.data;
+
+      // Create cache folder
+      const destination = new Directory(Paths.cache, documentType);
+
+      // Ensure folder exists
+      destination.create({ idempotent: true });
+
+      // Unique filename
+      const uniqueName = `${Date.now()}-${fileName}`;
+
+      // Create file path
+      const file = new File(destination, uniqueName);
+
+      // Download file
+      const downloadedFile = await File.downloadFileAsync(url, file);
+
+      console.log("Downloaded:", downloadedFile.uri);
+
+      Alert.alert("Download Complete ✓", `${fileName} downloaded successfully`);
+    } catch (error) {
+      console.error("Error while downloading file:", error);
+
+      Alert.alert("Download Failed", "Unable to download document");
+    }
+  };
+
+  /**
+   * Share Document
+   */
+  const handleShare = async () => {
+    try {
+      const available = await Sharing.isAvailableAsync();
+
+      if (!available) {
+        Alert.alert("Sharing is not available");
+        return;
+      }
+
+      const res: any = await downloadDocument(s3Key);
+
+      const url = res.data.data;
+
+      // Create unique filename
+      const uniqueName = `${Date.now()}-${fileName}`;
+
+      // Cache folder
+      const destination = new Directory(Paths.cache, documentType);
+
+      // Ensure directory exists
+      destination.create({ idempotent: true });
+
+      // Download file
+      const file = new File(destination, uniqueName);
+
+      const downloadedFile = await File.downloadFileAsync(url, file);
+
+      // Share
+      await Sharing.shareAsync(downloadedFile.uri);
+    } catch (error) {
+      console.log("Share Error:", error);
+      Alert.alert("Error", "Failed to share document");
+    }
+  };
+
+  /**
+   * Favorite
+   */
+  const handleFavorite = () => {
+    Toast.show({
+      type: "success",
+      text1: "Added to favorite",
+    });
+  };
+
+  /**
+   * Delete
+   */
+  const handleDeleteDoc = () => {
+    try {
+      deleteDocument(documentId);
+
+      Toast.show({
+        type: "success",
+        text1: "Document deleted successfully",
+      });
+    } catch (error) {
+      console.log(error);
+
+      Toast.show({
+        type: "error",
+        text1: "Failed to delete document",
+      });
+    }
+  };
+
   return (
     <View style={styles.container}>
-      {actions.map((item) => {
-        return (
-          <TouchableOpacity
-            key={item.id}
-            activeOpacity={0.85}
-            style={styles.actionButton}
-          >
-            <Ionicons name={item.icon as any} size={24} color={item.color} />
+      {/* Share */}
+      <TouchableOpacity
+        activeOpacity={0.85}
+        style={styles.actionButton}
+        onPress={handleShare}
+      >
+        <Ionicons name="share-social-outline" size={24} color="#7F5AF0" />
 
-            <Text style={styles.actionText}>{item.title}</Text>
-          </TouchableOpacity>
-        );
-      })}
+        <Text style={styles.actionText}>Share</Text>
+      </TouchableOpacity>
+
+      {/* Download */}
+      <TouchableOpacity
+        activeOpacity={0.85}
+        style={styles.actionButton}
+        onPress={handleDownload}
+      >
+        <Ionicons name="download-outline" size={24} color="#2563EB" />
+
+        <Text style={styles.actionText}>Download</Text>
+      </TouchableOpacity>
+
+      {/* Favorite */}
+      <TouchableOpacity
+        activeOpacity={0.85}
+        style={styles.actionButton}
+        onPress={handleFavorite}
+      >
+        <Ionicons name="star-outline" size={24} color="#F59E0B" />
+
+        <Text style={styles.actionText}>Favorite</Text>
+      </TouchableOpacity>
+
+      {/* Delete */}
+      <TouchableOpacity
+        activeOpacity={0.85}
+        style={styles.actionButton}
+        onPress={handleDeleteDoc}
+        disabled={isPending}
+      >
+        <Ionicons name="trash-outline" size={24} color="#EF4444" />
+
+        <Text style={styles.actionText}>
+          {isPending ? "Deleting..." : "Delete"}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -61,40 +250,20 @@ export default DocumentQuickActions;
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 36,
-
     flexDirection: "row",
     justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
 
   actionButton: {
-    width: 78,
-    height: 92,
-
-    backgroundColor: COLORS.white,
-    borderRadius: 18,
-
-    justifyContent: "center",
     alignItems: "center",
-
-    shadowColor: "#000",
-
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-
-    shadowOpacity: 0.04,
-    shadowRadius: 8,
-
-    elevation: 2,
+    justifyContent: "center",
   },
 
   actionText: {
-    marginTop: 10,
-
-    fontSize: 13,
-    fontWeight: "600",
-    color: COLORS.text,
+    marginTop: 6,
+    fontSize: 12,
+    color: COLORS.textPrimary,
   },
 });

@@ -30,41 +30,28 @@ import { useAppSelector } from "@/store/hooks";
 
 import { COLORS } from "@/theme/colors";
 
-import AppBottomSheet, {
-  AppBottomSheetRef,
-} from "@/components/common/AppBottomSheet";
-
 import { DocumentType, FetchDocumentsPayload, FileType } from "@/types";
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal
+} from "@gorhom/bottom-sheet";
 
 // import EmptySvg from "@/assets/svg/empty.svg";
 
 const Documents = () => {
   const router = useRouter();
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const snapPoints = useMemo(() => ["75%"], []);
+  const openBottomSheet = () => {
+    bottomSheetRef.current?.present();
+  };
+
+  const closeBottomSheet = () => {
+    bottomSheetRef.current?.dismiss();
+  };
 
   const user = useAppSelector((state) => state.auth.user);
 
-  /**
-   * BottomSheet Ref
-   */
-  const bottomSheetRef = useRef<AppBottomSheetRef>(null);
-
-  /**
-   * Open BottomSheet
-   */
-  const openBottomSheet = useCallback(() => {
-    bottomSheetRef.current?.open();
-  }, []);
-
-  /**
-   * Close BottomSheet
-   */
-  const closeBottomSheet = useCallback(() => {
-    bottomSheetRef.current?.close();
-  }, []);
-
-  /**
-   * Filters State
-   */
   const [filters, setFilters] = useState<FetchDocumentsPayload>({
     filter: {
       search: "",
@@ -195,9 +182,9 @@ const Documents = () => {
       /**
        * Close BottomSheet
        */
-      closeBottomSheet();
+      // closeBottomSheet();
     },
-    [closeBottomSheet, user?.id],
+    [user?.id],
   );
 
   /**
@@ -214,98 +201,112 @@ const Documents = () => {
     (isLoading || isRefetching) && documentList.length === 0;
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar
-        translucent={false}
-        barStyle="light-content"
-        backgroundColor={COLORS.primary}
-      />
-
-      <LinearGradient
-        colors={[COLORS.primary, COLORS.secondary]}
-        start={{ x: 0, y: 1 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.linearGradient}
-      >
-        {/* Header */}
-        <Header onOpenFilter={openBottomSheet} />
-
-        {/* Content */}
-        <View style={styles.container}>
-          {showInitialLoader ? (
-            <View style={styles.loaderContainer}>
-              <ActivityIndicator size="large" color={COLORS.primary} />
-            </View>
-          ) : documentList.length === 0 ? (
-            <View style={styles.emptyContainer}>
-              {/* <EmptySvg width={220} height={220} /> */}
-
-              <Text style={styles.emptyTitle}>No Documents Found</Text>
-
-              <Text style={styles.emptySubtitle}>
-                Try changing filters or search keyword
-              </Text>
-            </View>
-          ) : (
-            <FlatList
-              data={documentList}
-              keyExtractor={(item, index) => `${item.id}-${index}`}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.listContent}
-              onEndReachedThreshold={0.2}
-              removeClippedSubviews
-              maxToRenderPerBatch={10}
-              windowSize={10}
-              initialNumToRender={10}
-              refreshControl={
-                <RefreshControl
-                  refreshing={isRefetching}
-                  onRefresh={onRefresh}
-                  colors={[COLORS.primary]}
-                  tintColor={COLORS.primary}
-                />
-              }
-              onEndReached={() => {
-                if (hasNextPage && !isFetchingNextPage && !isRefetching) {
-                  fetchNextPage();
-                }
-              }}
-              renderItem={({ item }) => (
-                <DocumentCard
-                  item={item}
-                  onPress={() =>
-                    router.push({
-                      pathname: ROUTES_PATH.DocumentDetails,
-
-                      params: {
-                        documentId: item.id,
-                      },
-                    })
-                  }
-                />
-              )}
-              ListFooterComponent={
-                isFetchingNextPage ? (
-                  <ActivityIndicator
-                    size="small"
-                    color={COLORS.primary}
-                    style={styles.footerLoader}
-                  />
-                ) : null
-              }
-            />
-          )}
-        </View>
-      </LinearGradient>
-
-      {/* BottomSheet */}
-      <AppBottomSheet ref={bottomSheetRef} snapPoints={["85%"]}>
-        <FilterBottomSheet
-          // onClose={closeBottomSheet}
-          onApply={handleApplyFilters}
+    <>
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar
+          translucent={false}
+          barStyle="light-content"
+          backgroundColor={COLORS.primary}
         />
-      </AppBottomSheet>
-    </SafeAreaView>
+
+        <LinearGradient
+          colors={[COLORS.primary, COLORS.secondary]}
+          start={{ x: 0, y: 1 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.linearGradient}
+        >
+          {/* Header */}
+          <Header onOpenFilter={openBottomSheet} />
+
+          {/* Content */}
+          <View style={styles.container}>
+            {showInitialLoader ? (
+              <View style={styles.loaderContainer}>
+                <ActivityIndicator size="large" color={COLORS.primary} />
+              </View>
+            ) : documentList.length === 0 ? (
+              <View style={styles.emptyContainer}>
+                {/* <EmptySvg width={220} height={220} /> */}
+
+                <Text style={styles.emptyTitle}>No Documents Found</Text>
+
+                <Text style={styles.emptySubtitle}>
+                  Try changing filters or search keyword
+                </Text>
+              </View>
+            ) : (
+              <FlatList
+                data={documentList}
+                keyExtractor={(item, index) => `${item.id}-${index}`}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.listContent}
+                onEndReachedThreshold={0.2}
+                removeClippedSubviews
+                maxToRenderPerBatch={10}
+                windowSize={10}
+                initialNumToRender={10}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={isRefetching}
+                    onRefresh={onRefresh}
+                    colors={[COLORS.primary]}
+                    tintColor={COLORS.primary}
+                  />
+                }
+                onEndReached={() => {
+                  if (hasNextPage && !isFetchingNextPage && !isRefetching) {
+                    fetchNextPage();
+                  }
+                }}
+                renderItem={({ item }) => (
+                  <DocumentCard
+                    item={item}
+                    onPress={() =>
+                      router.push({
+                        pathname: ROUTES_PATH.DocumentDetails,
+
+                        params: {
+                          documentId: item.id,
+                        },
+                      })
+                    }
+                  />
+                )}
+                ListFooterComponent={
+                  isFetchingNextPage ? (
+                    <ActivityIndicator
+                      size="small"
+                      color={COLORS.primary}
+                      style={styles.footerLoader}
+                    />
+                  ) : null
+                }
+              />
+            )}
+          </View>
+        </LinearGradient>
+      </SafeAreaView>
+      <BottomSheetModal
+        ref={bottomSheetRef}
+        snapPoints={snapPoints}
+        enablePanDownToClose
+        style={{ flex: 1 }}
+        backdropComponent={(props) => (
+          <BottomSheetBackdrop
+            {...props}
+            disappearsOnIndex={-1}
+            appearsOnIndex={0}
+            pressBehavior="close"
+            opacity={0.5}
+          />
+        )}
+      >
+        <FilterBottomSheet
+          onApply={handleApplyFilters}
+          onClose={closeBottomSheet}
+        />
+      </BottomSheetModal>
+    </>
   );
 };
 

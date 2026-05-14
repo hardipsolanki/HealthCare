@@ -26,10 +26,10 @@ export default QuickActionCard;
 
 const styles = StyleSheet.create({
   quickCard: {
-    width: "23%",
+    width: "22%",
     borderRadius: 22,
     alignItems: "center",
-    paddingVertical: 18,
+    paddingVertical: 10,
     paddingHorizontal: 8,
   },
 
@@ -45,9 +45,9 @@ const styles = StyleSheet.create({
   quickTitle: {
     marginTop: 12,
     textAlign: "center",
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: "600",
-    color: COLORS.textPrimary,
+    color: COLORS.textSecondary,
     lineHeight: 17,
   },
 });

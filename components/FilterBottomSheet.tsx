@@ -1,27 +1,25 @@
 // components/FilterBottomSheet/index.tsx
 
-import React, { forwardRef, useMemo } from "react";
+import React from "react";
 
 import {
+  StatusBar,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 
 import { Controller, useForm } from "react-hook-form";
 
-import {
-  BottomSheetBackdrop,
-  BottomSheetModal,
-  BottomSheetScrollView,
-} from "@gorhom/bottom-sheet";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 import { Ionicons } from "@expo/vector-icons";
 
-import { TEXTS } from "@/constant/texts";
 import { COLORS } from "@/theme/colors";
+
+import { TEXTS } from "@/constant/texts";
+import CustomInput from "./Input";
 
 /**
  * Types
@@ -55,6 +53,8 @@ type FormValues = {
 };
 
 type Props = {
+  onClose: () => void;
+
   onApply: (data: any) => void;
 };
 
@@ -119,287 +119,246 @@ const inputFields = [
   },
 ] as const;
 
-const FilterBottomSheet = forwardRef<BottomSheetModal, Props>(
-  ({ onApply }, ref) => {
-    /**
-     * Snap Points
-     */
-    const snapPoints = useMemo(() => ["85%"], []);
+const FilterBottomSheet = ({ onClose, onApply }: Props) => {
+  /**
+   * React Hook Form
+   */
+  const { control, handleSubmit, reset, watch, setValue } = useForm<FormValues>(
+    {
+      defaultValues: {
+        search: "",
+        title: "",
+        createdBy: "",
+        doctorName: "",
+        hospitalName: "",
+        fileName: "",
+        documentType: undefined,
+        fileType: undefined,
+        sortBy: "createdAt",
+        orderBy: "desc",
+      },
+    },
+  );
 
-    /**
-     * React Hook Form
-     */
-    const { control, handleSubmit, reset, watch, setValue } =
-      useForm<FormValues>({
-        defaultValues: {
-          search: "",
-          title: "",
-          createdBy: "",
-          doctorName: "",
-          hospitalName: "",
-          fileName: "",
-          documentType: undefined,
-          fileType: undefined,
-          sortBy: "createdAt",
-          orderBy: "desc",
-        },
-      });
+  /**
+   * Submit
+   */
+  const onSubmit = (values: FormValues) => {
+    onApply({
+      filter: {
+        createdBy: values.createdBy || undefined,
 
-    /**
-     * Close Bottom Sheet
-     */
-    const handleClose = () => {
-      if (ref && typeof ref !== "function") {
-        ref.current?.close();
-      }
-    };
+        doctorName: values.doctorName || undefined,
 
-    /**
-     * Submit
-     */
-    const onSubmit = (values: FormValues) => {
-      onApply({
-        filter: {
-          createdBy: values.createdBy || undefined,
+        documentType: values.documentType,
 
-          doctorName: values.doctorName || undefined,
+        fileName: values.fileName || undefined,
 
-          documentType: values.documentType,
+        fileType: values.fileType,
 
-          fileName: values.fileName || undefined,
+        hospitalName: values.hospitalName || undefined,
 
-          fileType: values.fileType,
+        search: values.search || undefined,
 
-          hospitalName: values.hospitalName || undefined,
+        title: values.title || undefined,
+      },
 
-          search: values.search || undefined,
+      sort: {
+        sortBy: values.sortBy,
 
-          title: values.title || undefined,
-        },
+        orderBy: values.orderBy,
+      },
+    });
 
-        sort: {
-          sortBy: values.sortBy,
+    onClose();
+  };
 
-          orderBy: values.orderBy,
-        },
-      });
+  return (
+    <View style={styles.container}>
+      <StatusBar
+        translucent={false}
+        barStyle="dark-content"
+        // backgroundColor={COLORS.primary}
+      />
+      {/* ================= HEADER FIXED ================= */}
+      <View style={styles.header}>
+        <Text style={styles.title}>{TEXTS.filters.filter}</Text>
 
-      handleClose();
-    };
+        <View style={styles.headerRight}>
+          <TouchableOpacity onPress={() => reset()}>
+            <Text style={styles.resetText}>{TEXTS.filters.reset}</Text>
+          </TouchableOpacity>
 
-    return (
-      <BottomSheetModal
-        ref={ref}
-        snapPoints={snapPoints}
-        enablePanDownToClose
-        backdropComponent={(props) => (
-          <BottomSheetBackdrop
-            {...props}
-            disappearsOnIndex={-1}
-            appearsOnIndex={0}
-            opacity={0.4}
-            pressBehavior="close"
-          />
-        )}
+          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+            <Ionicons name="close" size={22} color={COLORS.textPrimary} />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* ================= SCROLLABLE CONTENT ================= */}
+      <BottomSheetScrollView
+        // keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
       >
-        <View style={styles.container}>
-          {/* HEADER */}
-          <View style={styles.header}>
-            <Text style={styles.title}>{TEXTS.filters.filter}</Text>
+        {/* Sort By */}
+        <View style={styles.fieldContainer}>
+          <Text style={styles.label}>Sort By</Text>
 
-            <View style={styles.headerRight}>
-              <TouchableOpacity onPress={() => reset()}>
-                <Text style={styles.resetText}>{TEXTS.filters.reset}</Text>
-              </TouchableOpacity>
+          <View style={styles.rowWrap}>
+            {sortOptions.map((item) => {
+              const active = watch("sortBy") === item;
 
-              <TouchableOpacity
-                style={styles.closeButton}
-                onPress={handleClose}
-              >
-                <Ionicons name="close" size={22} color={COLORS.textPrimary} />
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* SCROLLABLE CONTENT */}
-          <BottomSheetScrollView
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.scrollContent}
-          >
-            {/* Sort By */}
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>Sort By</Text>
-
-              <View style={styles.rowWrap}>
-                {sortOptions.map((item) => {
-                  const active = watch("sortBy") === item;
-
-                  return (
-                    <TouchableOpacity
-                      key={item}
-                      style={[
-                        styles.optionButton,
-                        active && styles.activeOption,
-                      ]}
-                      onPress={() => setValue("sortBy", item)}
-                    >
-                      <Text
-                        style={[
-                          styles.optionText,
-                          active && styles.activeOptionText,
-                        ]}
-                      >
-                        {item.toUpperCase()}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            </View>
-
-            {/* Order */}
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>Order</Text>
-
-              <View style={styles.rowWrap}>
-                {(["asc", "desc"] as const).map((item) => {
-                  const active = watch("orderBy") === item;
-
-                  return (
-                    <TouchableOpacity
-                      key={item}
-                      style={[
-                        styles.optionButton,
-                        active && styles.activeOption,
-                      ]}
-                      onPress={() => setValue("orderBy", item)}
-                    >
-                      <Text
-                        style={[
-                          styles.optionText,
-                          active && styles.activeOptionText,
-                        ]}
-                      >
-                        {item.toUpperCase()}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            </View>
-
-            {/* Dynamic Inputs */}
-            {inputFields.map((field) => (
-              <View key={field.name} style={styles.fieldContainer}>
-                <Text style={styles.label}>{field.label}</Text>
-
-                <Controller
-                  control={control}
-                  name={field.name}
-                  render={({ field: { onChange, value } }) => (
-                    <TextInput
-                      value={value}
-                      onChangeText={onChange}
-                      placeholder={field.placeholder}
-                      placeholderTextColor={COLORS.textSecondary}
-                      style={styles.input}
-                    />
-                  )}
-                />
-              </View>
-            ))}
-
-            {/* Document Type */}
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>Document Type</Text>
-
-              <View style={styles.rowWrap}>
-                {documentTypeOptions.map((item) => {
-                  const active = watch("documentType") === item;
-
-                  return (
-                    <TouchableOpacity
-                      key={item}
-                      style={[
-                        styles.optionButton,
-                        active && styles.activeOption,
-                      ]}
-                      onPress={() =>
-                        setValue("documentType", active ? undefined : item)
-                      }
-                    >
-                      <Text
-                        style={[
-                          styles.optionText,
-                          active && styles.activeOptionText,
-                        ]}
-                      >
-                        {item.toUpperCase()}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            </View>
-
-            {/* File Type */}
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>File Type</Text>
-
-              <View style={styles.rowWrap}>
-                {fileTypeOptions.map((item) => {
-                  const active = watch("fileType") === item;
-
-                  return (
-                    <TouchableOpacity
-                      key={item}
-                      style={[
-                        styles.optionButton,
-                        active && styles.activeOption,
-                      ]}
-                      onPress={() =>
-                        setValue("fileType", active ? undefined : item)
-                      }
-                    >
-                      <Text
-                        style={[
-                          styles.optionText,
-                          active && styles.activeOptionText,
-                        ]}
-                      >
-                        {item.toUpperCase()}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            </View>
-          </BottomSheetScrollView>
-
-          {/* FOOTER */}
-          <View style={styles.footer}>
-            <TouchableOpacity
-              style={styles.applyButton}
-              activeOpacity={0.8}
-              onPress={handleSubmit(onSubmit)}
-            >
-              <Text style={styles.applyButtonText}>
-                {TEXTS.filters.applyFilters}
-              </Text>
-            </TouchableOpacity>
+              return (
+                <TouchableOpacity
+                  key={item}
+                  style={[styles.optionButton, active && styles.activeOption]}
+                  onPress={() => setValue("sortBy", item)}
+                >
+                  <Text
+                    style={[
+                      styles.optionText,
+                      active && styles.activeOptionText,
+                    ]}
+                  >
+                    {item.toUpperCase()}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </View>
-      </BottomSheetModal>
-    );
-  },
-);
+
+        {/* Order */}
+        <View style={styles.fieldContainer}>
+          <Text style={styles.label}>Order</Text>
+
+          <View style={styles.rowWrap}>
+            {(["asc", "desc"] as const).map((item) => {
+              const active = watch("orderBy") === item;
+
+              return (
+                <TouchableOpacity
+                  key={item}
+                  style={[styles.optionButton, active && styles.activeOption]}
+                  onPress={() => setValue("orderBy", item)}
+                >
+                  <Text
+                    style={[
+                      styles.optionText,
+                      active && styles.activeOptionText,
+                    ]}
+                  >
+                    {item.toUpperCase()}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+
+        {/* Dynamic Inputs */}
+        {inputFields.map((field) => (
+          <View key={field.name} style={styles.fieldContainer}>
+            <Text style={styles.label}>{field.label}</Text>
+
+            <Controller
+              control={control}
+              name={field.name}
+              render={({ field: { onChange, value } }) => (
+                <CustomInput
+                  value={value}
+                  onChangeText={onChange}
+                  placeholder={field.placeholder}
+                  icon={""}
+                />
+              )}
+            />
+          </View>
+        ))}
+
+        {/* Document Type */}
+        <View style={styles.fieldContainer}>
+          <Text style={styles.label}>Document Type</Text>
+
+          <View style={styles.rowWrap}>
+            {documentTypeOptions.map((item) => {
+              const active = watch("documentType") === item;
+
+              return (
+                <TouchableOpacity
+                  key={item}
+                  style={[styles.optionButton, active && styles.activeOption]}
+                  onPress={() =>
+                    setValue("documentType", active ? undefined : item)
+                  }
+                >
+                  <Text
+                    style={[
+                      styles.optionText,
+                      active && styles.activeOptionText,
+                    ]}
+                  >
+                    {item.toUpperCase()}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+
+        {/* File Type */}
+        <View style={styles.fieldContainer}>
+          <Text style={styles.label}>File Type</Text>
+
+          <View style={styles.rowWrap}>
+            {fileTypeOptions.map((item) => {
+              const active = watch("fileType") === item;
+
+              return (
+                <TouchableOpacity
+                  key={item}
+                  style={[styles.optionButton, active && styles.activeOption]}
+                  onPress={() =>
+                    setValue("fileType", active ? undefined : item)
+                  }
+                >
+                  <Text
+                    style={[
+                      styles.optionText,
+                      active && styles.activeOptionText,
+                    ]}
+                  >
+                    {item.toUpperCase()}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+      </BottomSheetScrollView>
+
+      {/* ================= FOOTER FIXED ================= */}
+      <View style={styles.footer}>
+        <TouchableOpacity
+          style={styles.applyButton}
+          activeOpacity={0.8}
+          onPress={handleSubmit(onSubmit)}
+        >
+          <Text style={styles.applyButtonText}>
+            {TEXTS.filters.applyFilters}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
 
 export default FilterBottomSheet;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height: "100%",
     backgroundColor: COLORS.white,
   },
 
@@ -453,9 +412,10 @@ const styles = StyleSheet.create({
    * SCROLL CONTENT
    */
   scrollContent: {
+    flex: 1,
     paddingHorizontal: 20,
     paddingTop: 18,
-    paddingBottom: 30,
+    // paddingBottom: 30,
   },
 
   fieldContainer: {
@@ -524,17 +484,14 @@ const styles = StyleSheet.create({
   },
 
   /**
-   * FOOTER
+   * FOOTER FIXED
    */
   footer: {
     paddingHorizontal: 20,
     paddingTop: 14,
     paddingBottom: 24,
-
     borderTopWidth: 1,
     borderTopColor: "#ECECEC",
-
-    backgroundColor: COLORS.white,
   },
 
   applyButton: {

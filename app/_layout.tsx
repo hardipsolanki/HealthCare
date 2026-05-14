@@ -56,6 +56,30 @@ const RootLayout = () => {
                   headerShown: false,
                 }}
               />
+              <Stack.Screen
+                name={ROUTES.TermsOfConditions}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name={ROUTES.PrivacyPolicy}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name={ROUTES.UploadDocSuccess}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name={ROUTES.UploadingDocument}
+                options={{
+                  headerShown: false,
+                }}
+              />
             </Stack>
             <Toast />
           </BottomSheetModalProvider>

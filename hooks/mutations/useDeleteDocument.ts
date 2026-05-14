@@ -1,17 +1,17 @@
-import { addDocument } from '@/api/documents/documents.endpoints'
+import { deleteDocument } from '@/api/documents/documents.endpoints'
 import { queryClient } from '@/lib/queryClient'
 import { queryKeys } from '@/lib/queryKeys'
 import { useMutation } from '@tanstack/react-query'
 
-export const useAddDocument = () => {
+export const useDeleteDocument = () => {
+
   return useMutation({
-    mutationFn: addDocument,
+    mutationFn: deleteDocument,
     onSuccess: () => {
-      // Invalidate and refetch
       queryClient.invalidateQueries({ queryKey: queryKeys.documents.all })
     },
     onError: (error) => {
-      console.log('Add document failed:', error)
+      console.log('Delete document failed:', error)
     },
   })
 }

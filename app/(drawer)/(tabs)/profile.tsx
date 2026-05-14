@@ -17,9 +17,11 @@ import {
   View,
 } from "react-native";
 
+import { ROUTES_PATH } from "@/constant";
 import { TEXTS } from "@/constant/texts";
 import { useAppSelector } from "@/store/hooks";
 import { COLORS } from "@/theme/colors";
+import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const menuItems = [
@@ -47,15 +49,18 @@ const menuItems = [
     id: 5,
     title: TEXTS.profile.privacyPolicy,
     icon: <AntDesign name="safety" size={20} color="#FF5E7E" />,
+    link: ROUTES_PATH.PrivacyPolicy,
   },
   {
     id: 6,
     title: TEXTS.profile.termsConditions,
     icon: <Ionicons name="document-text-outline" size={20} color="#2ED573" />,
+    link: ROUTES_PATH.TermsOfConditions,
   },
 ];
 
 export default function ProfileScreen() {
+  const router = useRouter();
   const user = useAppSelector((state) => state.auth.user);
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
@@ -84,9 +89,9 @@ export default function ProfileScreen() {
             <Text style={styles.userPhone}>{user?.phone}</Text>
           </View>
 
-          <TouchableOpacity activeOpacity={0.8} style={styles.editButton}>
+          {/* <TouchableOpacity activeOpacity={0.8} style={styles.editButton}>
             <Feather name="edit-2" size={14} color={COLORS.white} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
         {/* Scrollable Section */}
@@ -101,6 +106,9 @@ export default function ProfileScreen() {
                   key={item.id}
                   activeOpacity={0.8}
                   style={styles.menuItem}
+                  {...(item.link && {
+                    onPress: () => router.push(item.link),
+                  })}
                 >
                   <View style={styles.menuLeft}>
                     <View style={styles.iconContainer}>{item.icon}</View>
