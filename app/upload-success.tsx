@@ -1,22 +1,21 @@
 import React from "react";
 
 import {
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 
 import { Ionicons } from "@expo/vector-icons";
 
 import CustomButton from "@/components/Button";
 import { ROUTES_PATH } from "@/constant";
-import { formatFileSize } from "@/helpers/formatSize";
 
 const formatDateTime = (value?: string) => {
   if (!value) {
@@ -44,20 +43,26 @@ const formatDateTime = (value?: string) => {
   });
 };
 
-type UploadSuccessProps = {
+type UploadSuccessParams = {
   fileName: string;
-  size: number;
+  size: string;
   documentType: string;
+  id: string;
 };
-const UploadSuccess = ({
-  documentType,
-  fileName,
-  size,
-}: UploadSuccessProps) => {
+const UploadSuccess = () => {
   const router = useRouter();
 
+  const data = useLocalSearchParams<UploadSuccessParams>();
+
+  const { fileName, size, documentType, id } = data;
+
   const handleViewDocument = () => {
-    router.push(ROUTES_PATH.Documents);
+    router.replace({
+      pathname: ROUTES_PATH.DocumentDetails,
+      params: {
+        documentId: id,
+      },
+    });
   };
 
   const handleUploadAnother = () => {
@@ -121,7 +126,7 @@ const UploadSuccess = ({
                 {fileName}
               </Text>
 
-              <Text style={styles.fileSize}>{formatFileSize(size)}</Text>
+              <Text style={styles.fileSize}>{size}</Text>
             </View>
           </View>
 

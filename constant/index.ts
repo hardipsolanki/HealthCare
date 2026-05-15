@@ -7,10 +7,10 @@ export const ROUTES = {
     ADD_DOCUMENT: "add-document",
     DOCUMENT_DETAILS: "document-details/[documentId]",
     DRAWER: "(drawer)",
-    TermsOfConditions: "terms-and-conditions",
-    PrivacyPolicy: "privacy-policy",
     UploadDocSuccess: "upload-success",
-    UploadingDocument: "uploading-document"
+    UploadingDocument: "uploading-document",
+    Camera: "camera",
+    ligal: "ligal/[type]"
 }
 
 export const ROUTES_PATH = {
@@ -18,12 +18,12 @@ export const ROUTES_PATH = {
     Login: "/login",
     Signup: "/signup",
     AddDocument: "/add-document",
-    DocumentDetails: `/document-details/[documentId]`,
-    // Profile: "/profile",
-    Profile: "/uploading-document",
+    DocumentDetails: "/document-details/[documentId]",
+    Profile: "/profile",
+    // Profile: "/uploading-document",
     Documents: "/documents",
-    TermsOfConditions: "/terms-and-conditions",
-    PrivacyPolicy: "/privacy-policy",
+    ligal: "/ligal/[type]",
     UploadDocSuccess: "/upload-success",
-    UploadingDocument: "/uploading-document"
+    UploadingDocument: "/uploading-document",
+    Camera: "/camera"
 } as const

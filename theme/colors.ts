@@ -30,4 +30,5 @@ export const COLORS = {
   subText: "#8E8E93",
 
   red: "#FF4D4F",
+  tabs: '#A0A0A0'
 };

@@ -72,68 +72,64 @@ const DocumentDetails = () => {
   }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="dark-content" />
-
-      <LinearGradient
-        colors={[COLORS.primary, COLORS.secondary]}
-        start={{ x: 0, y: 1 }}
-        end={{ x: 1, y: 0 }}
-        style={styles.header}
-      >
+    <LinearGradient
+      colors={[COLORS.primary, COLORS.secondary]}
+      start={{ x: 0, y: 1 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.header}
+    >
+      <StatusBar barStyle="light-content" />
+      <SafeAreaView style={styles.safeArea}>
         {/* LEFT */}
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginHorizontal: 16,
+          }}
         >
-          <Ionicons name="arrow-back" size={24} color={COLORS.white} />
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={styles.backButton}
+          >
+            <Ionicons name="arrow-back" size={24} color={COLORS.white} />
+          </TouchableOpacity>
 
-        {/* CENTER TITLE */}
-        <View style={styles.titleContainer}>
+          {/* CENTER TITLE */}
+          {/* <View style={styles.titleContainer}> */}
           <Text numberOfLines={1} style={styles.headerTitle}>
             {documentData?.fileName}
           </Text>
+          {/* </View> */}
         </View>
 
-        {/* RIGHT ACTIONS */}
-        <View style={styles.headerRight}>
-          <TouchableOpacity style={styles.headerIcon}>
-            <Ionicons name="star-outline" size={22} color={COLORS.white} />
-          </TouchableOpacity>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.content}
+        >
+          {/* DOCUMENT CARD */}
+          <DocumentInfoCard data={documentData} />
 
-          <TouchableOpacity>
-            <Ionicons name="ellipsis-vertical" size={22} color={COLORS.white} />
-          </TouchableOpacity>
-        </View>
-      </LinearGradient>
+          {/* DESCRIPTION */}
+          <View style={styles.descriptionContainer}>
+            <Text style={styles.descriptionTitle}>Description</Text>
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.content}
-      >
-        {/* DOCUMENT CARD */}
-        <DocumentInfoCard data={documentData} />
+            <Text style={styles.descriptionText}>
+              {documentData?.remarks || documentData?.ocrExtractedText}
+            </Text>
+          </View>
 
-        {/* DESCRIPTION */}
-        <View style={styles.descriptionContainer}>
-          <Text style={styles.descriptionTitle}>Description</Text>
-
-          <Text style={styles.descriptionText}>
-            {documentData?.remarks || documentData?.ocrExtractedText}
-          </Text>
-        </View>
-
-        {/* QUICK ACTIONS */}
-        <DocumentQuickActions
-          documentId={documentData.id}
-          documentUrl={documentData.fileStoragePath}
-          s3Key={documentData.s3Key}
-          documentType={documentData.documentType}
-          fileName={documentData.fileName}
-        />
-      </ScrollView>
-    </SafeAreaView>
+          {/* QUICK ACTIONS */}
+          <DocumentQuickActions
+            documentId={documentData.id}
+            documentUrl={documentData.fileStoragePath}
+            s3Key={documentData.s3Key}
+            documentType={documentData.documentType}
+            fileName={documentData.fileName}
+          />
+        </ScrollView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 };
 
@@ -142,17 +138,11 @@ export default DocumentDetails;
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#F7F7FA",
   },
 
   header: {
-    paddingHorizontal: 16,
+    flex: 1,
     paddingTop: 16,
-    paddingBottom: 22,
-    marginBottom: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
   },
 
   backButton: {
@@ -187,9 +177,13 @@ const styles = StyleSheet.create({
   },
 
   content: {
-    paddingHorizontal: 16,
-    paddingBottom: 30,
-    marginTop: -10,
+    marginTop: 24,
+    flexGrow: 1,
+    backgroundColor: COLORS.white,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingHorizontal: 24,
+    paddingTop: 24,
   },
 
   descriptionContainer: {

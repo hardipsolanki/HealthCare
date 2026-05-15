@@ -7,6 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { ROUTES_PATH } from "@/constant";
 import { TEXTS } from "@/constant/texts";
+import { pickImageFromGallery } from "@/helpers/gallery";
 import { COLORS } from "@/theme/colors";
 import { useRouter } from "expo-router";
 
@@ -18,6 +19,7 @@ const uploadOptions = [
     icon: "camera",
     color: "#7C3AED",
     bg: "#F3E8FF",
+    link: ROUTES_PATH.Camera,
   },
 
   {
@@ -32,9 +34,9 @@ const uploadOptions = [
 
   {
     id: 4,
-    title: TEXTS.uploadDocument.files,
-    desc: TEXTS.uploadDocument.filesDesc,
-    icon: "folder",
+    title: TEXTS.uploadDocument.gallery,
+    desc: TEXTS.uploadDocument.galleryDesc,
+    icon: "image",
     color: "#2563EB",
     bg: "#DBEAFE",
   },
@@ -42,6 +44,23 @@ const uploadOptions = [
 
 const UploadBottomSheet = ({ onClose }: { onClose: () => void }) => {
   const router = useRouter();
+
+  const handlePickImageFromGallery = async () => {
+    const file = await pickImageFromGallery();
+
+    if (!file) return;
+
+    onClose();
+
+    router.push({
+      pathname: ROUTES_PATH.AddDocument,
+      params: {
+        file: JSON.stringify(file),
+        type: "gallery",
+      },
+    });
+  };
+
   return (
     <View style={styles.container}>
       {/* TITLE */}
@@ -59,7 +78,16 @@ const UploadBottomSheet = ({ onClose }: { onClose: () => void }) => {
             activeOpacity={0.8}
             style={styles.optionCard}
             onPress={() => {
-              router.push(item.link || ROUTES_PATH.AddDocument);
+              if (item.icon === "image") {
+                handlePickImageFromGallery();
+                return;
+              }
+              router.push({
+                pathname: item.link || ROUTES_PATH.AddDocument,
+                params: {
+                  type: "document",
+                },
+              });
               onClose();
             }}
           >
@@ -102,7 +130,8 @@ export default UploadBottomSheet;
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 20,
+    paddingVertical: 10,
+    minHeight: 400,
   },
   title: {
     fontSize: 24,

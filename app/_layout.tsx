@@ -57,13 +57,7 @@ const RootLayout = () => {
                 }}
               />
               <Stack.Screen
-                name={ROUTES.TermsOfConditions}
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name={ROUTES.PrivacyPolicy}
+                name={ROUTES.ligal}
                 options={{
                   headerShown: false,
                 }}
@@ -76,6 +70,12 @@ const RootLayout = () => {
               />
               <Stack.Screen
                 name={ROUTES.UploadingDocument}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name={ROUTES.Camera}
                 options={{
                   headerShown: false,
                 }}

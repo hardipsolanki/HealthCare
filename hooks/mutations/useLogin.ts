@@ -8,7 +8,7 @@ export const useLoginUser = () => {
     mutationFn: login,
     onSuccess: () => {
       // Invalidate and refetch
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.all })
+      queryClient.invalidateQueries({ queryKey: queryKeys.users.all() })
     },
     onError: (error) => {
       console.log('Login failed:', error)

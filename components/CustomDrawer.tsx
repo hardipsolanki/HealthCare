@@ -24,7 +24,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { COLORS } from "@/theme/colors";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import LogoutModal from "./LogoutModal";
+import CustomModal from "./LogoutModal";
 const drawerItems = [
   {
     icon: <Ionicons name="person-outline" size={22} color="#667085" />,
@@ -65,14 +65,18 @@ const drawerItems = [
 
   {
     icon: <MaterialIcons name="help-outline" size={22} color="#667085" />,
-    title: TEXTS.drawer.helpSupport,
+    title: TEXTS.drawer.termsOfConditions,
+    link: ROUTES_PATH.ligal,
+    type: "terms",
   },
 
   {
     icon: (
       <Ionicons name="information-circle-outline" size={22} color="#667085" />
     ),
-    title: TEXTS.drawer.aboutUs,
+    title: TEXTS.drawer.privacyPolicy,
+    link: ROUTES_PATH.ligal,
+    type: "privacy",
   },
 ];
 
@@ -114,7 +118,12 @@ const CustomDrawer = (props: DrawerContentComponentProps) => {
             activeOpacity={0.8}
             key={index}
             style={styles.menuItem}
-            onPress={() => router.push(ROUTES_PATH.Profile)}
+            onPress={() =>
+              router.push({
+                pathname: item.link as any,
+                params: { type: item.type },
+              })
+            }
           >
             {item.icon}
 
@@ -136,11 +145,13 @@ const CustomDrawer = (props: DrawerContentComponentProps) => {
       </TouchableOpacity>
 
       {logoutModalVisible && (
-        <LogoutModal
+        <CustomModal
           visible={logoutModalVisible}
           onClose={() => setLogoutModalVisible(false)}
           isLoading={isPending}
-          onLogout={() => {
+          actionBtnName="Logout"
+          text={`Are you sure you want to{"\n"} logout from your account? `}
+          onPress={() => {
             logout();
             dispatch(logoutUser())
               .unwrap()

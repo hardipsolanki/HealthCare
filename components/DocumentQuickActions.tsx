@@ -1,13 +1,6 @@
 import React from "react";
 
-import {
-  Alert,
-  Platform,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
 
@@ -15,9 +8,11 @@ import Toast from "react-native-toast-message";
 
 import { useDeleteDocument } from "@/hooks/mutations/useDeleteDocument";
 
+import { ROUTES_PATH } from "@/constant";
 import { useDownloadDocument } from "@/hooks/mutations/useDownloadDocument";
 import { COLORS } from "@/theme/colors";
 import { Directory, File, Paths } from "expo-file-system";
+import { useRouter } from "expo-router";
 import * as Sharing from "expo-sharing";
 
 type Props = {
@@ -41,53 +36,7 @@ const DocumentQuickActions = ({
 }: Props) => {
   const { mutate: deleteDocument, isPending } = useDeleteDocument();
   const { mutateAsync: downloadDocument } = useDownloadDocument();
-
-  /**
-   * Export on Android
-   */
-  const saveOnAndroid = async (fileUri: string, fileName: string) => {
-    try {
-      const permissions =
-        // (await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync()) as any;
-
-        // if (!permissions.granted) {
-        //   Alert.alert("Permission Denied", "Folder access is required.");
-        //   return;
-        // }
-
-        // const destinationUri = await SAF.createFileAsync(
-        //   permissions.directoryUri,
-        //   fileName,
-        //   getMimeType (fileName),
-        // );
-
-        // const fileContent = await FileSystem.readAsStringAsync(fileUri, {
-        //   encoding: FileSystem.EncodingType.Base64,
-        // });
-
-        // await FileSystem.writeAsStringAsync(destinationUri, fileContent, {
-        //   encoding: FileSystem.EncodingType.Base64,
-        // });
-
-        Alert.alert("Success ✓", `Saved as ${fileName}`);
-    } catch (error) {
-      console.error("Android save error:", error);
-    }
-  };
-  /**
-   * Export Document
-   *
-   */
-
-  const exportDocument = async (url: string) => {
-    try {
-      if (Platform.OS === "android") {
-        await saveOnAndroid(url, fileName);
-      }
-    } catch (error) {
-      console.log("Export Error:", error);
-    }
-  };
+  const router = useRouter();
 
   /**
    * Download Document
@@ -114,8 +63,6 @@ const DocumentQuickActions = ({
 
       // Download file
       const downloadedFile = await File.downloadFileAsync(url, file);
-
-      console.log("Downloaded:", downloadedFile.uri);
 
       Alert.alert("Download Complete ✓", `${fileName} downloaded successfully`);
     } catch (error) {
@@ -159,39 +106,25 @@ const DocumentQuickActions = ({
       await Sharing.shareAsync(downloadedFile.uri);
     } catch (error) {
       console.log("Share Error:", error);
-      Alert.alert("Error", "Failed to share document");
     }
-  };
-
-  /**
-   * Favorite
-   */
-  const handleFavorite = () => {
-    Toast.show({
-      type: "success",
-      text1: "Added to favorite",
-    });
   };
 
   /**
    * Delete
    */
   const handleDeleteDoc = () => {
-    try {
-      deleteDocument(documentId);
-
-      Toast.show({
-        type: "success",
-        text1: "Document deleted successfully",
-      });
-    } catch (error) {
-      console.log(error);
-
-      Toast.show({
-        type: "error",
-        text1: "Failed to delete document",
-      });
-    }
+    deleteDocument(documentId, {
+      onSuccess: (data) => {
+        Toast.show({
+          type: "success",
+          text1: "Document deleted successfully",
+        });
+        router.push(ROUTES_PATH.Documents);
+      },
+      onError: (error) => {
+        console.log("error while document delete", error);
+      },
+    });
   };
 
   return (
@@ -216,17 +149,6 @@ const DocumentQuickActions = ({
         <Ionicons name="download-outline" size={24} color="#2563EB" />
 
         <Text style={styles.actionText}>Download</Text>
-      </TouchableOpacity>
-
-      {/* Favorite */}
-      <TouchableOpacity
-        activeOpacity={0.85}
-        style={styles.actionButton}
-        onPress={handleFavorite}
-      >
-        <Ionicons name="star-outline" size={24} color="#F59E0B" />
-
-        <Text style={styles.actionText}>Favorite</Text>
       </TouchableOpacity>
 
       {/* Delete */}

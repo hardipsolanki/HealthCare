@@ -19,6 +19,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/theme/colors";
 
 import { TEXTS } from "@/constant/texts";
+import { SafeAreaView } from "react-native-safe-area-context";
 import CustomInput from "./Input";
 
 /**
@@ -28,7 +29,16 @@ type SortByType = "createdAt" | "updatedAt" | "title";
 
 type DocumentType = "prescription" | "report" | "invoice" | "other";
 
-type FileType = "pdf" | "jpg" | "jpeg" | "png";
+/**
+ * IMPORTANT:
+ * Backend expects MIME TYPES not extensions
+ */
+type FileType =
+  | "application/pdf"
+  | "image/jpeg"
+  | "image/png"
+  | "text/plain"
+  | "application/document";
 
 type FormValues = {
   search: string;
@@ -75,8 +85,34 @@ const documentTypeOptions: DocumentType[] = [
 
 /**
  * File Types
+ * label = UI display
+ * value = API value
  */
-const fileTypeOptions: FileType[] = ["pdf", "jpg", "jpeg", "png"];
+const fileTypeOptions: {
+  label: string;
+  value: FileType;
+}[] = [
+  {
+    label: "Pdf",
+    value: "application/pdf",
+  },
+  {
+    label: "Jpg / Jpeg",
+    value: "image/jpeg",
+  },
+  {
+    label: "Png",
+    value: "image/png",
+  },
+  {
+    label: "Text",
+    value: "text/plain",
+  },
+  {
+    label: "Doc",
+    value: "application/document",
+  },
+];
 
 /**
  * Dynamic Inputs
@@ -92,12 +128,6 @@ const inputFields = [
     label: "Title",
     name: "title",
     placeholder: "Enter title",
-  },
-
-  {
-    label: "Created By",
-    name: "createdBy",
-    placeholder: "Enter creator name",
   },
 
   {
@@ -154,6 +184,9 @@ const FilterBottomSheet = ({ onClose, onApply }: Props) => {
 
         fileName: values.fileName || undefined,
 
+        /**
+         * Now sending correct MIME TYPE
+         */
         fileType: values.fileType,
 
         hospitalName: values.hospitalName || undefined,
@@ -174,13 +207,10 @@ const FilterBottomSheet = ({ onClose, onApply }: Props) => {
   };
 
   return (
-    <View style={styles.container}>
-      <StatusBar
-        translucent={false}
-        barStyle="dark-content"
-        // backgroundColor={COLORS.primary}
-      />
-      {/* ================= HEADER FIXED ================= */}
+    <SafeAreaView style={styles.container}>
+      <StatusBar translucent={false} barStyle="dark-content" />
+
+      {/* ================= HEADER ================= */}
       <View style={styles.header}>
         <Text style={styles.title}>{TEXTS.filters.filter}</Text>
 
@@ -195,9 +225,8 @@ const FilterBottomSheet = ({ onClose, onApply }: Props) => {
         </View>
       </View>
 
-      {/* ================= SCROLLABLE CONTENT ================= */}
+      {/* ================= CONTENT ================= */}
       <BottomSheetScrollView
-        // keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
@@ -221,7 +250,8 @@ const FilterBottomSheet = ({ onClose, onApply }: Props) => {
                       active && styles.activeOptionText,
                     ]}
                   >
-                    {item.toUpperCase()}
+                    {item.split("")?.[0].toUpperCase() +
+                      item.split("").slice(1).join("")}
                   </Text>
                 </TouchableOpacity>
               );
@@ -249,7 +279,8 @@ const FilterBottomSheet = ({ onClose, onApply }: Props) => {
                       active && styles.activeOptionText,
                     ]}
                   >
-                    {item.toUpperCase()}
+                    {item.split("")?.[0].toUpperCase() +
+                      item.split("").slice(1).join("")}
                   </Text>
                 </TouchableOpacity>
               );
@@ -270,7 +301,7 @@ const FilterBottomSheet = ({ onClose, onApply }: Props) => {
                   value={value}
                   onChangeText={onChange}
                   placeholder={field.placeholder}
-                  icon={""}
+                  icon=""
                 />
               )}
             />
@@ -299,7 +330,8 @@ const FilterBottomSheet = ({ onClose, onApply }: Props) => {
                       active && styles.activeOptionText,
                     ]}
                   >
-                    {item.toUpperCase()}
+                    {item.split("")?.[0].toUpperCase() +
+                      item.split("").slice(1).join("")}
                   </Text>
                 </TouchableOpacity>
               );
@@ -313,14 +345,14 @@ const FilterBottomSheet = ({ onClose, onApply }: Props) => {
 
           <View style={styles.rowWrap}>
             {fileTypeOptions.map((item) => {
-              const active = watch("fileType") === item;
+              const active = watch("fileType") === item.value;
 
               return (
                 <TouchableOpacity
-                  key={item}
+                  key={item.value}
                   style={[styles.optionButton, active && styles.activeOption]}
                   onPress={() =>
-                    setValue("fileType", active ? undefined : item)
+                    setValue("fileType", active ? undefined : item.value)
                   }
                 >
                   <Text
@@ -329,7 +361,7 @@ const FilterBottomSheet = ({ onClose, onApply }: Props) => {
                       active && styles.activeOptionText,
                     ]}
                   >
-                    {item.toUpperCase()}
+                    {item.label}
                   </Text>
                 </TouchableOpacity>
               );
@@ -338,7 +370,7 @@ const FilterBottomSheet = ({ onClose, onApply }: Props) => {
         </View>
       </BottomSheetScrollView>
 
-      {/* ================= FOOTER FIXED ================= */}
+      {/* ================= FOOTER ================= */}
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.applyButton}
@@ -350,7 +382,7 @@ const FilterBottomSheet = ({ onClose, onApply }: Props) => {
           </Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -409,13 +441,13 @@ const styles = StyleSheet.create({
   },
 
   /**
-   * SCROLL CONTENT
+   * CONTENT
    */
   scrollContent: {
-    flex: 1,
+    flexGrow: 1,
     paddingHorizontal: 20,
     paddingTop: 18,
-    // paddingBottom: 30,
+    paddingBottom: 30,
   },
 
   fieldContainer: {
@@ -429,21 +461,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
 
     color: COLORS.textSecondary,
-  },
-
-  input: {
-    height: 52,
-
-    borderWidth: 1,
-    borderColor: COLORS.border,
-
-    borderRadius: 14,
-
-    paddingHorizontal: 14,
-
-    backgroundColor: COLORS.white,
-
-    color: COLORS.textPrimary,
   },
 
   rowWrap: {
@@ -484,12 +501,13 @@ const styles = StyleSheet.create({
   },
 
   /**
-   * FOOTER FIXED
+   * FOOTER
    */
   footer: {
     paddingHorizontal: 20,
     paddingTop: 14,
     paddingBottom: 24,
+
     borderTopWidth: 1,
     borderTopColor: "#ECECEC",
   },

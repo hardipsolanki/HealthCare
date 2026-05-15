@@ -1,10 +1,11 @@
-import { getReq, postReq } from "@/helpers/axiosInstance";
+import { deleteReq, getReq, postReq } from "@/helpers/axiosInstance";
 import { AddDocumentInput, FetchDocumentsPayload, PaginatedDocumentResponse, SingleDocumentResponse } from "@/types";
 
 
 
-export const addDocument = async (data: AddDocumentInput) => {
+export const addDocument = async (data: AddDocumentInput,  signal?: AbortSignal) => {
     const res = await postReq("/documents/add", data, {
+        signal,
         headers: {
             "Content-Type": "multipart/form-data"
         }
@@ -24,7 +25,6 @@ export const fetchDocumentsWithFilter = async (payload: FetchDocumentsPayload) =
 
 export const fetchDocument = async (documentId: string) => {
     try {
-
         const res = await getReq<SingleDocumentResponse>(`/documents/${documentId}`);
         return res.data.data
     } catch (error) {
@@ -35,7 +35,7 @@ export const fetchDocument = async (documentId: string) => {
 
 export const deleteDocument = async (documentId: string) => {
     try {
-        const res = await getReq(`/documents/${documentId}`);
+        const res = await deleteReq(`/documents/${documentId}`);
         return res
     } catch (error) {
         console.log("Error while delete docuemnt: ", error)

@@ -8,7 +8,7 @@ export const useCreateUser = () => {
     mutationFn: createAccount,
     onSuccess: () => {
       // Invalidate and refetch
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.all })
+      queryClient.invalidateQueries({ queryKey: queryKeys.users.all() })
     },
     onError: (error) => {
       console.log('Create user failed:', error)

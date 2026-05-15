@@ -54,7 +54,7 @@ axiosInstance.interceptors.response.use(
     },
 
     async (error: AxiosError) => {
-        console.log("errpr res: ", error.response?.status)
+        console.log("error res: ", error.response?.status)
         // handle some error if user is not logged in then redirect to login page
         if (error.response?.status !== 401) {
             return Promise.reject(error);
@@ -85,6 +85,8 @@ axiosInstance.interceptors.response.use(
             }
             catch (err: any) {
                 console.error("Error at refresh token", err.response.status)
+                // navigate to login
+
 
                 //If refresh token is invalid, you will receive this error status and log user out
                 if (err.response.status === 400) {

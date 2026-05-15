@@ -9,23 +9,25 @@ import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 import Svg, { Circle } from "react-native-svg";
 
-import { formatFileSize } from "@/helpers/formatSize";
+import CustomModal from "@/components/LogoutModal";
+import { ROUTES_PATH } from "@/constant";
+import { useAddDocument } from "@/hooks/mutations/useAddDocument";
+import { ApiError, ImageFile } from "@/types";
 import { LinearGradient } from "expo-linear-gradient";
+import Toast from "react-native-toast-message";
 
 type UploadingDocParams = {
-  fileName?: string;
-  fileSize?: string;
-  documentType?: string;
-  isPending?: string;
+  documentType: string;
+  file: string;
 };
 
 const CIRCLE_SIZE = 190;
@@ -35,38 +37,82 @@ const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 const UploadingDocument = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
+  const {
+    mutate: addDocument,
+    isPending,
+    abortControllerRef,
+  } = useAddDocument();
+  const data = useLocalSearchParams<UploadingDocParams>();
+  const file: ImageFile = data?.file ? JSON.parse(data.file as string) : null;
+  const documentType = data?.documentType || "";
+  const [isModelOpen, setIsModelOpen] = useState(false);
 
-  const simulateProgress = () => {
-    setUploadProgress(0);
-
+  useEffect(() => {
     let progress = 0;
+
+    setUploadProgress(0);
 
     const interval = setInterval(() => {
       progress += 10;
 
-      if (progress === 90) {
+      // stop at 90 until API success
+      if (progress >= 90) {
         clearInterval(interval);
         return;
       }
 
       setUploadProgress(progress);
-
-      if (progress >= 100) {
-        clearInterval(interval);
-      }
     }, 200);
 
-    return interval;
-  };
+    addDocument(
+      {
+        documentType,
+        file,
+      },
+      {
+        onSuccess: (data: any) => {
+          clearInterval(interval);
 
-  useEffect(() => {
-    const interval = simulateProgress();
+          setUploadProgress(100);
 
-    return () => clearInterval(interval);
+          Toast.show({
+            type: "success",
+            text1: "Document uploaded successfully",
+          });
+
+          setTimeout(() => {
+            router.replace({
+              pathname: ROUTES_PATH.UploadDocSuccess,
+              params: {
+                documentType,
+                fileName: file.name,
+                size: file.size,
+                id: data.data.data.id,
+              },
+            });
+          }, 500);
+        },
+
+        onError: (error: ApiError) => {
+          console.log({ error });
+          clearInterval(interval);
+
+          setUploadProgress(0);
+
+          Toast.show({
+            type: "error",
+            text1: error?.data?.message || "Upload failed",
+          });
+        },
+      },
+    );
+
+    return () => {
+      clearInterval(interval);
+    };
   }, []);
 
   const router = useRouter();
-  const params = useLocalSearchParams<UploadingDocParams>();
   const progressValue = uploadProgress || 0;
 
   const strokeDashoffset =
@@ -81,7 +127,13 @@ const UploadingDocument = () => {
         <TouchableOpacity
           style={styles.headerBtn}
           activeOpacity={0.8}
-          onPress={() => router.back()}
+          onPress={() => {
+            if (isPending) {
+              setIsModelOpen(true);
+            } else {
+              router.back();
+            }
+          }}
         >
           <Ionicons name="arrow-back" size={22} color="#111827" />
         </TouchableOpacity>
@@ -201,11 +253,9 @@ const UploadingDocument = () => {
 
               <View style={{ flex: 1 }}>
                 <Text style={styles.fileName} numberOfLines={1}>
-                  {params.fileName}
+                  {}
                 </Text>
-                <Text style={styles.fileSize}>
-                  {formatFileSize(Number(params?.fileSize || 0))}
-                </Text>
+                <Text style={styles.fileSize}>{file?.size}</Text>
               </View>
             </View>
 
@@ -224,9 +274,7 @@ const UploadingDocument = () => {
           </View>
 
           <View style={styles.progressFooter}>
-            <Text style={styles.progressMeta}>
-              {formatFileSize(Number(params?.fileSize || 0))}
-            </Text>
+            <Text style={styles.progressMeta}>{file?.size}</Text>
 
             <Text style={styles.progressMeta}>{progressValue}%</Text>
           </View>
@@ -249,9 +297,24 @@ const UploadingDocument = () => {
         {/* SMALL DETAIL ROW */}
         <View style={styles.detailRow}>
           <Text style={styles.detailLabel}>Category</Text>
-          <Text style={styles.detailValue}>{params.documentType}</Text>
+          <Text style={styles.detailValue}>{documentType}</Text>
         </View>
       </View>
+
+      {isModelOpen && (
+        <CustomModal
+          visible={isModelOpen}
+          onClose={() => setIsModelOpen(false)}
+          isLoading={false}
+          actionBtnName="Yes"
+          text={`Are you sure you want to\ncancel upload?`}
+          onPress={() => {
+            abortControllerRef.current?.abort();
+            setIsModelOpen(false);
+            router.back();
+          }}
+        />
+      )}
     </SafeAreaView>
   );
 };

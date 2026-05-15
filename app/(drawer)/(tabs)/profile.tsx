@@ -26,11 +26,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const menuItems = [
   {
-    id: 1,
-    title: TEXTS.profile.personalInformation,
-    icon: <Ionicons name="person-outline" size={20} color={COLORS.primary} />,
-  },
-  {
     id: 2,
     title: TEXTS.profile.emergencyContacts,
     icon: <MaterialIcons name="contact-phone" size={20} color="#FF9F43" />,
@@ -49,13 +44,15 @@ const menuItems = [
     id: 5,
     title: TEXTS.profile.privacyPolicy,
     icon: <AntDesign name="safety" size={20} color="#FF5E7E" />,
-    link: ROUTES_PATH.PrivacyPolicy,
+    link: ROUTES_PATH.ligal,
+    type: "privacy",
   },
   {
     id: 6,
     title: TEXTS.profile.termsConditions,
     icon: <Ionicons name="document-text-outline" size={20} color="#2ED573" />,
-    link: ROUTES_PATH.TermsOfConditions,
+    link: ROUTES_PATH.ligal,
+    type: "terms",
   },
 ];
 
@@ -63,15 +60,15 @@ export default function ProfileScreen() {
   const router = useRouter();
   const user = useAppSelector((state) => state.auth.user);
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top"]}>
-      <StatusBar barStyle="dark-content" />
+    <LinearGradient
+      colors={[COLORS.primary, COLORS.secondary]}
+      start={{ x: 0, y: 1 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.header}
+    >
+      <SafeAreaView style={styles.safeArea} edges={["top"]}>
+        <StatusBar barStyle="light-content" />
 
-      <LinearGradient
-        colors={[COLORS.primary, COLORS.secondary]}
-        start={{ x: 0, y: 1 }}
-        end={{ x: 1, y: 0 }}
-        style={styles.header}
-      >
         {/* Profile Card */}
         <View style={styles.profileCard}>
           <Image
@@ -107,7 +104,11 @@ export default function ProfileScreen() {
                   activeOpacity={0.8}
                   style={styles.menuItem}
                   {...(item.link && {
-                    onPress: () => router.push(item.link),
+                    onPress: () =>
+                      router.push({
+                        pathname: item.link,
+                        params: { type: item.type },
+                      }),
                   })}
                 >
                   <View style={styles.menuLeft}>
@@ -126,15 +127,15 @@ export default function ProfileScreen() {
             </View>
           </ScrollView>
         </View>
-      </LinearGradient>
-    </SafeAreaView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: COLORS.white,
+    // backgroundColor: COLORS.secondary,
   },
 
   scrollContainer: {

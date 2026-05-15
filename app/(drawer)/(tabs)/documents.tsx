@@ -31,17 +31,14 @@ import { useAppSelector } from "@/store/hooks";
 import { COLORS } from "@/theme/colors";
 
 import { DocumentType, FetchDocumentsPayload, FileType } from "@/types";
-import {
-  BottomSheetBackdrop,
-  BottomSheetModal
-} from "@gorhom/bottom-sheet";
+import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 
 // import EmptySvg from "@/assets/svg/empty.svg";
 
 const Documents = () => {
   const router = useRouter();
   const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ["75%"], []);
+  const snapPoints = useMemo(() => ["100%"], []);
   const openBottomSheet = () => {
     bottomSheetRef.current?.present();
   };
@@ -202,19 +199,14 @@ const Documents = () => {
 
   return (
     <>
-      <SafeAreaView style={styles.safeArea}>
-        <StatusBar
-          translucent={false}
-          barStyle="light-content"
-          backgroundColor={COLORS.primary}
-        />
-
-        <LinearGradient
-          colors={[COLORS.primary, COLORS.secondary]}
-          start={{ x: 0, y: 1 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.linearGradient}
-        >
+      <LinearGradient
+        colors={[COLORS.primary, COLORS.secondary]}
+        start={{ x: 0, y: 1 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.linearGradient}
+      >
+        <SafeAreaView style={styles.safeArea} edges={["top"]}>
+          <StatusBar barStyle="light-content" />
           {/* Header */}
           <Header onOpenFilter={openBottomSheet} />
 
@@ -284,8 +276,8 @@ const Documents = () => {
               />
             )}
           </View>
-        </LinearGradient>
-      </SafeAreaView>
+        </SafeAreaView>
+      </LinearGradient>
       <BottomSheetModal
         ref={bottomSheetRef}
         snapPoints={snapPoints}

@@ -3,7 +3,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import React, { useMemo, useRef } from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { Platform, StyleSheet, TouchableOpacity } from "react-native";
 
 import {
   BottomSheetBackdrop,
@@ -27,127 +27,125 @@ const TabsLayout = () => {
 
   return (
     <>
-      <>
-        <Tabs
-          screenOptions={{
-            headerShown: false,
-            tabBarShowLabel: true,
+      <Tabs
+        screenOptions={{
+          headerShown: false,
+          tabBarShowLabel: true,
 
-            tabBarActiveTintColor: COLORS.primary,
-            tabBarInactiveTintColor: "#98A2B3",
-            // tabBarStyle: {
-            //   height: 70,
-            // },
+          tabBarActiveTintColor: COLORS.primary,
+          tabBarInactiveTintColor: "#98A2B3",
+          tabBarStyle: {
+            paddingBottom: Platform.OS === "ios" ? 10 : 0,
+          },
+        }}
+      >
+        {/* HOME */}
+
+        <Tabs.Screen
+          name="home"
+          options={{
+            title: "Home",
+
+            tabBarIcon: ({ color, focused }) => (
+              <Ionicons
+                name={focused ? "home" : "home-outline"}
+                size={22}
+                color={color}
+              />
+            ),
           }}
-        >
-          {/* HOME */}
+        />
 
-          <Tabs.Screen
-            name="home"
-            options={{
-              title: "Home",
+        {/* DOCUMENTS */}
 
-              tabBarIcon: ({ color, focused }) => (
-                <Ionicons
-                  name={focused ? "home" : "home-outline"}
-                  size={22}
-                  color={color}
-                />
-              ),
-            }}
+        <Tabs.Screen
+          name="documents"
+          options={{
+            title: "Documents",
+
+            tabBarIcon: ({ color, focused }) => (
+              <Ionicons
+                name={focused ? "document-text" : "document-text-outline"}
+                size={22}
+                color={color}
+              />
+            ),
+          }}
+        />
+
+        {/* CENTER ADD BUTTON */}
+        <Tabs.Screen
+          name="dummy"
+          options={{
+            title: "",
+
+            tabBarLabel: () => null,
+
+            tabBarButton: () => (
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={styles.addButton}
+                onPress={openBottomSheet}
+              >
+                <Ionicons name="add" size={30} color={COLORS.white} />
+              </TouchableOpacity>
+            ),
+          }}
+        />
+        {/* APPOINTMENTS */}
+
+        <Tabs.Screen
+          name="appointments"
+          options={{
+            title: "Appointments",
+
+            tabBarIcon: ({ color, focused }) => (
+              <Ionicons
+                name={focused ? "calendar" : "calendar-outline"}
+                size={22}
+                color={color}
+              />
+            ),
+          }}
+        />
+
+        {/* PROFILE */}
+
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: "Profile",
+
+            tabBarIcon: ({ color, focused }) => (
+              <Ionicons
+                name={focused ? "person" : "person-outline"}
+                size={22}
+                color={color}
+              />
+            ),
+          }}
+        />
+      </Tabs>
+      <BottomSheetModal
+        ref={bottomSheetRef}
+        // index={-1}
+        enablePanDownToClose
+        snapPoints={snapPoints}
+        backdropComponent={(props) => (
+          <BottomSheetBackdrop
+            {...props}
+            disappearsOnIndex={-1}
+            appearsOnIndex={0}
+            opacity={0.4}
           />
-
-          {/* DOCUMENTS */}
-
-          <Tabs.Screen
-            name="documents"
-            options={{
-              title: "Documents",
-
-              tabBarIcon: ({ color, focused }) => (
-                <Ionicons
-                  name={focused ? "document-text" : "document-text-outline"}
-                  size={22}
-                  color={color}
-                />
-              ),
-            }}
-          />
-
-          {/* CENTER ADD BUTTON */}
-          <Tabs.Screen
-            name="dummy"
-            options={{
-              title: "",
-
-              tabBarLabel: () => null,
-
-              tabBarButton: () => (
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  style={styles.addButton}
-                  onPress={openBottomSheet}
-                >
-                  <Ionicons name="add" size={30} color={COLORS.white} />
-                </TouchableOpacity>
-              ),
-            }}
-          />
-          {/* APPOINTMENTS */}
-
-          <Tabs.Screen
-            name="appointments"
-            options={{
-              title: "Appointments",
-
-              tabBarIcon: ({ color, focused }) => (
-                <Ionicons
-                  name={focused ? "calendar" : "calendar-outline"}
-                  size={22}
-                  color={color}
-                />
-              ),
-            }}
-          />
-
-          {/* PROFILE */}
-
-          <Tabs.Screen
-            name="profile"
-            options={{
-              title: "Profile",
-
-              tabBarIcon: ({ color, focused }) => (
-                <Ionicons
-                  name={focused ? "person" : "person-outline"}
-                  size={22}
-                  color={color}
-                />
-              ),
-            }}
-          />
-        </Tabs>
-        <BottomSheetModal
-          ref={bottomSheetRef}
-          // index={-1}
-          enablePanDownToClose
-          snapPoints={snapPoints}
-          backdropComponent={(props) => (
-            <BottomSheetBackdrop
-              {...props}
-              disappearsOnIndex={-1}
-              appearsOnIndex={0}
-              opacity={0.4}
-            />
-          )}
-          handleIndicatorStyle={styles.indicator}
-          backgroundStyle={styles.bottomSheetBackground}
-        >
-          <BottomSheetView style={styles.sheetContent}>
-            <UploadBottomSheet onClose={closeBottomSheet} />
-          </BottomSheetView>
-        </BottomSheetModal>
-      </>
+        )}
+        handleIndicatorStyle={styles.indicator}
+        backgroundStyle={styles.bottomSheetBackground}
+      >
+        <BottomSheetView style={styles.sheetContent}>
+          <UploadBottomSheet onClose={closeBottomSheet} />
+        </BottomSheetView>
+      </BottomSheetModal>
     </>
   );
 };
@@ -158,32 +156,19 @@ export default TabsLayout;
 
 const styles = StyleSheet.create({
   addButton: {
-    // width: 50,
-
-    // height: 50,
-
-    borderRadius: 100,
-
+    marginTop: 4,
+    width: 54,
+    height: 54,
+    borderRadius: 27,
     backgroundColor: COLORS.primary,
-
     justifyContent: "center",
-
     alignItems: "center",
-
-    // marginBottom: 28,
-    marginTop: 8,
-
+    marginBottom: Platform.OS === "ios" ? 10 : 16,
+    alignSelf: "center",
     shadowColor: COLORS.primary,
-
-    shadowOffset: {
-      width: 0,
-      height: 6,
-    },
-
-    shadowOpacity: 0.35,
-
-    shadowRadius: 10,
-
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
     elevation: 8,
   },
   indicator: {

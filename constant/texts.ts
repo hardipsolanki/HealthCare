@@ -1,3 +1,4 @@
+
 export const TEXTS = {
     login: {
         appTitle: "HealthCare",
@@ -46,8 +47,8 @@ export const TEXTS = {
         pdf: "PDF Document",
         pdfDesc: "Upload PDF file",
 
-        files: "Other Files",
-        filesDesc: "Browse files",
+        Gallery: "Gallery",
+        filesDesc: "Upload files",
     },
     addDocument: {
         title: "Upload Document",
@@ -131,9 +132,9 @@ export const TEXTS = {
 
     settings: "Settings",
 
-    helpSupport: "Help & Support",
+    termsOfConditions: "Terms & Conditions",
 
-    aboutUs: "About Us",
+    privacyPolicy: "Privacy Policy",
 
     logout: "Logout",
 

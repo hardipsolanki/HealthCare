@@ -18,15 +18,19 @@ type LogoutModalProps = {
 
   onClose: () => void;
 
-  onLogout: () => void;
+  onPress: () => void;
   isLoading: boolean;
+  actionBtnName: string;
+  text: string;
 };
 
-const LogoutModal = ({
+const CustomModal = ({
   visible,
   onClose,
-  onLogout,
+  onPress,
   isLoading,
+  actionBtnName,
+  text,
 }: LogoutModalProps) => {
   return (
     <Modal
@@ -51,27 +55,24 @@ const LogoutModal = ({
 
           {/* TITLE */}
 
-          <Text style={styles.title}>Logout</Text>
+          <Text style={styles.title}>{actionBtnName}</Text>
 
           {/* DESCRIPTION */}
 
-          <Text style={styles.description}>
-            Are you sure you want to{"\n"}
-            logout from your account?
-          </Text>
+          <Text style={styles.description}>{text}</Text>
 
           {/* LOGOUT BUTTON */}
 
           <TouchableOpacity
             activeOpacity={0.8}
             style={styles.logoutButton}
-            onPress={onLogout}
+            onPress={onPress}
             disabled={isLoading}
           >
             {isLoading ? (
               <ActivityIndicator size="small" color={COLORS.white} />
             ) : (
-              <Text style={styles.logoutText}>Logout</Text>
+              <Text style={styles.logoutText}>{actionBtnName}</Text>
             )}
           </TouchableOpacity>
 
@@ -90,7 +91,7 @@ const LogoutModal = ({
   );
 };
 
-export default LogoutModal;
+export default CustomModal;
 
 const styles = StyleSheet.create({
   overlay: {

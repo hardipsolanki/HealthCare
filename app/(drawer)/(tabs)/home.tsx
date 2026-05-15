@@ -83,22 +83,13 @@ export default function HomeScreen() {
   const user = useAppSelector((state) => state.auth.user);
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
+      <StatusBar barStyle="light-content" />
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <StatusBar barStyle="dark-content" />
-
         {/* ================= TOP PURPLE AREA ================= */}
-
-        <LinearGradient
-          colors={["#7F5AF0", "#6D4BEF", "#5B3DF5"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.topSection}
-        >
-          {/* HEADER */}
-
+        <View style={styles.topSection}>
           <View style={styles.header}>
             <TouchableOpacity onPress={() => navigation.openDrawer()}>
               <Ionicons name="menu-outline" size={28} color={COLORS.white} />
@@ -131,7 +122,8 @@ export default function HomeScreen() {
               <Text style={styles.subGreeting}>Good morning</Text>
             </View>
           </View>
-        </LinearGradient>
+        </View>
+        {/* HEADER */}
 
         {/* ================= WHITE BODY ================= */}
 
@@ -214,6 +206,7 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: COLORS.primary,
     flex: 1,
   },
 
