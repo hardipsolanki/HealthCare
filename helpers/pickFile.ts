@@ -26,7 +26,7 @@ export const pickFile = async ({
             }
 
             const result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ["images", "videos"],
+                mediaTypes: ["images"],
                 allowsEditing: true,
                 aspect: [4, 3],
                 quality: 1,
@@ -63,7 +63,7 @@ export const pickFile = async ({
             return {
                 uri: file.uri,
                 name: file.name,
-                type: file.mimeType || ".pdf",
+                type: file.mimeType || "application/pdf",
                 size: file.size || 0,
             };
         }
